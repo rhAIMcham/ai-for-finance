@@ -116,30 +116,58 @@ colgroup {
 <body>
 <table>
  <colgroup>
-        <col style="width: 20%;">
-        <col style="width: 20%;">
         <col style="width: 30%;">
-        <col style="width: 30%;">
+        <col style="width: 35%;">
+        <col style="width: 35%;">
       </colgroup>
   <thead>
-    <th>titleOne</th>
-    <th>titleTwo</th>
-    <th>titleThree</th>
-    <th>titleFour</th>
+    <th>Element</th>
+    <th>What it means</th>
+    <th>Example</th>
   </thead>
   <tbody>
     <tr>
-        <td data-label="titleOne">
-        Content 1
+        <td data-label="Element">
+       Context
         </td>
-        <td data-label="titleTwo">
-            Content 2
+        <td data-label="What it means">
+           Background information the AI needs to understand the situation. This includes who you are, what the data represents and any relevant constraints.
         </td>
-        <td data-label="titleThree">
-            Content 3
+        <td data-label="Example">
+            "I am a finance manager preparing monthly management accounts for a mid-sized retail company with four stores."
         </td>
-        <td data-label="titleFour">
-            Content 4
+    </tr>
+    <tr>
+        <td data-label="Element">
+      Task
+        </td>
+        <td data-label="What it means">
+         A clear, specific description of what you want the AI to do. The more precise, the better.
+        </td>
+        <td data-label="Example">
+           "Please reconcile these two datasets by matching transactions on date, amount and description."
+        </td>
+    </tr>
+    <tr>
+        <td data-label="Element">
+       Format
+        </td>
+        <td data-label="What it means">
+         How you want the output structured. Without this, the AI will choose its own structure, which may not match what you need.
+        </td>
+        <td data-label="Example">
+            "Present the results as a summary table with columns for matched, likely matched, and unmatched items, followed by a detailed list of unmatched transactions."
+        </td>
+    </tr>
+    <tr>
+        <td data-label="Element">
+       Constraints
+        </td>
+        <td data-label="What it means">
+           Boundaries, rules, tone, length or quality standards the output must meet. These prevent common problems before they occur.
+        </td>
+        <td data-label="Example">
+           "Flag any item where the variance exceeds $5,000 or 10%. Do not infer explanations for variances. List them as requiring investigation."
         </td>
     </tr>
   </tbody>
