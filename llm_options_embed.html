@@ -27,9 +27,44 @@ input {
 body {
     font-family: "IBM Plex Sans", sans-serif;
 }
+
+img {
+    width: 220px;
+}
+.cardBar {
+    display: flex;
+    justify-content: space-evenly;
+}
+.imageCard {
+    border-radius: 16px;
+    border: solid 2px var(--lightBlue);
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    cursor: pointer;
+    transition: transform 1s ease-in-out;
+    transition: background-color 0.3s ease-in-out;
+}
+.imageCard:hover {
+    background-color: var(--darkBlue);
+    transform: translateY(-2px);
+}
 </style>
 </head>
 <body>
-
+<section class="cardBar">
+    <div class="imageCard">
+    <img src="Images/chatgpt_logo.svg.png" alt="Icon of OpenAI's ChatGPT">
+        <p>ChatGPT</p>
+    </div>
+    <div class="imageCard">
+    <img src="Images/claude_logo.svg.png" alt="Icon of OpenAI's ChatGPT">
+        <p>Claude</p>
+    </div>
+    <div class="imageCard">
+    <img src="Images/gemini_logo.png" alt="Icon of OpenAI's ChatGPT">
+        <p>Gemini</p>
+    </div>
+</section>
 </body>
 </html>
