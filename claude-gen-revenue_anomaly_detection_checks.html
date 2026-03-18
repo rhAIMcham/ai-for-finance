@@ -1,0 +1,138 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.wrap { padding: 16px 0; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.leg { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-tertiary); padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--color-border-tertiary); }
+tbody tr { border-bottom: 1px solid var(--color-border-tertiary); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--color-background-secondary); }
+td { padding: 9px 10px; vertical-align: top; line-height: 1.5; color: var(--color-text-primary); }
+.cat { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.cat-amount   { background: #E6F1FB; color: #0C447C; }
+.cat-freq     { background: #EAF3DE; color: #27500A; }
+.cat-timing   { background: #FAEEDA; color: #633806; }
+.cat-dup      { background: #FCEBEB; color: #791F1F; }
+.cat-combo    { background: #EEEDFE; color: #3C3489; }
+@media (prefers-color-scheme: dark) {
+  .cat-amount { background: #0C447C; color: #B5D4F4; }
+  .cat-freq   { background: #27500A; color: #C0DD97; }
+  .cat-timing { background: #633806; color: #FAC775; }
+  .cat-dup    { background: #791F1F; color: #F7C1C1; }
+  .cat-combo  { background: #3C3489; color: #CECBF6; }
+}
+.muted { color: var(--color-text-secondary); font-size: 12px; }
+.q { color: var(--color-text-secondary); font-size: 11px; font-style: italic; margin-top: 4px; border-left: 2px solid var(--color-border-secondary); padding-left: 6px; }
+td:nth-child(1) { width: 100px; }
+td:nth-child(2) { width: 140px; font-weight: 500; }
+td:nth-child(3) { width: 140px; }
+td:nth-child(4) { min-width: 120px; }
+td:nth-child(5) { min-width: 130px; }
+</style>
+<div class="wrap">
+<div class="legend">
+  <span class="leg"><span class="leg-dot" style="background:#378ADD"></span>Amount</span>
+  <span class="leg"><span class="leg-dot" style="background:#639922"></span>Frequency</span>
+  <span class="leg"><span class="leg-dot" style="background:#BA7517"></span>Timing</span>
+  <span class="leg"><span class="leg-dot" style="background:#E24B4A"></span>Duplicates</span>
+  <span class="leg"><span class="leg-dot" style="background:#7F77DD"></span>Unusual combos</span>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Test name</th>
+      <th>Required fields</th>
+      <th>Example threshold</th>
+      <th>True issue may indicate</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td><span class="cat cat-amount">Amount</span></td>
+      <td>Revenue spike / drop<div class="q">What's your normal daily/weekly variance? Seasonal? Do you use rolling avg or fixed budget?</div></td>
+      <td class="muted">Trans. date, revenue amount, segment/channel</td>
+      <td class="muted">Daily rev &gt;3× or &lt;30% of 30-day rolling avg</td>
+      <td class="muted">Accrual error, cutoff manipulation, pricing override, system posting error</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-amount">Amount</span></td>
+      <td>Round-number concentration<div class="q">Are round amounts normal in your business (e.g. fixed-fee contracts)? What % of transactions are currently round?</div></td>
+      <td class="muted">Invoice/order amount, customer ID</td>
+      <td class="muted">&gt;15% of transactions end in exactly .00 with no contract basis</td>
+      <td class="muted">Manual override, fictitious revenue, side agreements</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-amount">Amount</span></td>
+      <td>Just-below threshold booking<div class="q">What approval or disclosure thresholds exist? (e.g. deal desk review at $X, board reporting at $Y)</div></td>
+      <td class="muted">Transaction amount, approval threshold table</td>
+      <td class="muted">&gt;5% of deals fall within 2% below a known threshold</td>
+      <td class="muted">Channel stuffing, quota gaming, avoiding approval controls</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-freq">Frequency</span></td>
+      <td>Customer order velocity surge<div class="q">What's a normal order cadence per customer segment? Do you have bulk/volume customers that skew this?</div></td>
+      <td class="muted">Customer ID, order date, order count</td>
+      <td class="muted">Customer places &gt;5× their 90-day avg orders in one week</td>
+      <td class="muted">Bill-and-hold scheme, channel stuffing, fictitious customer</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-freq">Frequency</span></td>
+      <td>New customer revenue concentration<div class="q">What % of revenue from new customers is normal? Do you have a ramp period before bookings count?</div></td>
+      <td class="muted">Customer ID, first order date, revenue amount, period</td>
+      <td class="muted">New customers &gt;40% of period revenue when trailing 6-month avg is &lt;15%</td>
+      <td class="muted">Pulled-forward deals, related-party transactions, fictitious buyers</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-timing">Timing</span></td>
+      <td>Period-end revenue clustering<div class="q">What % of monthly revenue typically closes in the last 3 days? Is your business inherently back-loaded?</div></td>
+      <td class="muted">Transaction date, revenue amount, fiscal period</td>
+      <td class="muted">&gt;35% of monthly revenue posted on last 3 days of period</td>
+      <td class="muted">Early recognition, channel stuffing, cutoff manipulation</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-timing">Timing</span></td>
+      <td>Backdated transaction<div class="q">Is backdating ever legitimately required (e.g. contract amendments)? Who has permission to backdate and for how long?</div></td>
+      <td class="muted">Transaction date, system entry timestamp, user ID</td>
+      <td class="muted">Entry timestamp &gt;5 business days after transaction date</td>
+      <td class="muted">Revenue pulled into prior period, SOX cutoff violation</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-timing">Timing</span></td>
+      <td>Credit memo lag<div class="q">What's your normal time-to-credit? Do some product lines have longer dispute cycles?</div></td>
+      <td class="muted">Invoice date, credit memo date, customer ID, amount</td>
+      <td class="muted">Credit memo issued &gt;60 days after original invoice, &gt;$X</td>
+      <td class="muted">Returns or concessions hidden in next period; premature recognition</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-dup">Duplicates</span></td>
+      <td>Duplicate invoice / order<div class="q">Do you use a single order management system or multiple? Are there known integration gaps where re-posts occur?</div></td>
+      <td class="muted">Invoice number, customer ID, amount, date, line items</td>
+      <td class="muted">Same customer + amount + date ±2 days, different invoice #</td>
+      <td class="muted">Double-counting revenue, system integration error, fraud</td>
+    </tr>
+
+    <tr>
+      <td><span class="cat cat-combo">Unusual combo</span></td>
+      <td>High-discount + high-revenue rep<div class="q">What's your standard discount policy by tier/role? Are there approved discount bands per product line?</div></td>
+      <td class="muted">Rep/sales ID, discount %, revenue amount, approval flag</td>
+      <td class="muted">Rep with avg discount &gt;20% also in top 10% of revenue booked</td>
+      <td class="muted">Side agreements, unrecorded concessions, improper incentive calc</td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
