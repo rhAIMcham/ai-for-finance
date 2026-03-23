@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acme Corporation — Q2 FY2025 Stakeholder Communications</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:       #0D1B2A;
+    --blue:       #1B3A5C;
+    --mid-blue:   #2E6DA4;
+    --light-blue: #D6E8F7;
+    --pale:       #F4F6F9;
+    --white:      #FFFFFF;
+    --amber:      #C47A1B;
+    --amber-bg:   #FEF3DC;
+    --green:      #1A6B3C;
+    --green-bg:   #E4F5EC;
+    --red:        #B03020;
+    --red-bg:     #FDF0EE;
+    --charcoal:   #1E2530;
+    --muted:      #6B7A8D;
+    --rule:       #DDE3EC;
+    --orange:     #A85A10;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #EEF1F6;
+    color: var(--charcoal);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 1rem;
+  }
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .masthead-title span { color: var(--mid-blue); }
+  .masthead-meta {
+    text-align: right;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  /* ── TAB NAV ── */
+  .tab-nav {
+    max-width: 900px;
+    margin: 0 auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    box-shadow: 0 -2px 12px rgba(13,27,42,0.08);
+  }
+  .tab-btn {
+    background: var(--blue);
+    border: none;
+    cursor: pointer;
+    padding: 0.9rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    transition: background 0.2s, transform 0.15s;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn:hover { background: #243f5e; }
+  .tab-btn.active {
+    background: var(--white);
+    transform: translateY(-2px);
+    z-index: 2;
+    box-shadow: 0 -3px 0 var(--mid-blue) inset;
+  }
+  .tab-btn .tab-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    transition: color 0.2s;
+  }
+  .tab-btn.active .tab-label { color: var(--muted); }
+  .tab-btn .tab-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--white);
+    transition: color 0.2s;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .tab-btn.active .tab-name { color: var(--navy); }
+  .tab-btn .tab-pill {
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.12rem 0.4rem;
+    border-radius: 20px;
+    margin-top: 0.1rem;
+  }
+  .pill-gov  { background: rgba(214,232,247,0.25); color: rgba(255,255,255,0.7); }
+  .pill-dec  { background: rgba(26,107,60,0.3);    color: #7de0aa; }
+  .pill-act  { background: rgba(180,90,16,0.3);    color: #f5c07a; }
+  .pill-ext  { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
+  .tab-btn.active .pill-gov  { background: var(--light-blue); color: var(--mid-blue); }
+  .tab-btn.active .pill-dec  { background: var(--green-bg);   color: var(--green); }
+  .tab-btn.active .pill-act  { background: var(--amber-bg);   color: var(--amber); }
+  .tab-btn.active .pill-ext  { background: var(--pale);       color: var(--muted); }
+
+  /* ── CARD ── */
+  .card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 40px rgba(13,27,42,0.12);
+    overflow: hidden;
+  }
+
+  /* ── PANEL ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── SHARED SECTION STYLES ── */
+  .sec-hdr {
+    padding: 0.5rem 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .sec-hdr.blue  { background: var(--mid-blue); }
+  .sec-hdr.amber { background: var(--amber); }
+  .sec-hdr.red   { background: var(--red); }
+  .sec-hdr.green { background: var(--green); }
+  .sec-hdr.navy  { background: var(--navy); }
+
+  .sec-body { padding: 1.25rem 1.5rem; }
+  .sec-body p, .sec-body li {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--charcoal);
+    font-weight: 300;
+  }
+  .sec-body strong { font-weight: 600; color: var(--navy); }
+
+  .sub-grid { display: grid; grid-template-columns: 160px 1fr; gap: 0; }
+  .sub-lbl {
+    padding: 1rem 1rem 1rem 1.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--mid-blue);
+    background: var(--light-blue);
+    border-bottom: 1px solid rgba(46,109,164,0.12);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 1.1rem;
+  }
+  .sub-txt {
+    padding: 0.9rem 1.5rem 0.9rem 1rem;
+    font-size: 0.855rem;
+    line-height: 1.7;
+    color: var(--charcoal);
+    font-weight: 300;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sub-grid .sub-lbl:last-of-type,
+  .sub-grid .sub-txt:last-of-type { border-bottom: none; }
+
+  .risk-grid { display: grid; grid-template-columns: 160px 1fr; gap: 0; }
+  .risk-lbl {
+    padding: 0.9rem 1rem 0.9rem 1.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--orange);
+    background: var(--amber-bg);
+    border-bottom: 1px solid rgba(200,130,28,0.15);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 1.05rem;
+  }
+  .risk-txt {
+    padding: 0.85rem 1.5rem 0.85rem 1rem;
+    font-size: 0.855rem;
+    line-height: 1.7;
+    color: var(--charcoal);
+    font-weight: 300;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* ── HEADLINE BLOCK ── */
+  .headline-block {
+    background: var(--green-bg);
+    border-left: 3px solid var(--green);
+    margin: 1.25rem 1.5rem;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--charcoal);
+    font-weight: 300;
+  }
+
+  /* ── DECISIONS BLOCK ── */
+  .decision-block {
+    background: var(--red-bg);
+    margin: 0;
+    padding: 1.1rem 1.5rem;
+  }
+  .decision-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(176,48,32,0.1);
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--charcoal);
+    font-weight: 400;
+  }
+  .decision-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .decision-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--red);
+    background: rgba(176,48,32,0.1);
+    border-radius: 50%;
+    width: 1.4rem;
+    height: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* ── EXEC PANEL ── */
+  .exec-block { padding: 1rem 1.5rem; border-bottom: 1px solid var(--rule); }
+  .exec-block:last-child { border-bottom: none; }
+  .exec-row {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    font-size: 0.855rem;
+    line-height: 1.65;
+    font-weight: 300;
+  }
+  .exec-bullet {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--mid-blue);
+    flex-shrink: 0;
+    margin-top: 0.32rem;
+    letter-spacing: 0.05em;
+  }
+  .exec-row strong { font-weight: 600; color: var(--navy); }
+  .confirm-row { display: flex; gap: 0.5rem; padding: 0.35rem 0; font-size: 0.855rem; line-height: 1.65; font-weight: 300; border-bottom: 1px solid var(--rule); }
+  .confirm-row:last-child { border-bottom: none; }
+  .confirm-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; margin-top: 0.55rem; }
+  .action-row { display: flex; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.855rem; line-height: 1.65; border-bottom: 1px solid rgba(176,48,32,0.1); }
+  .action-row:last-child { border-bottom: none; }
+  .action-num { font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500; color: var(--red); flex-shrink: 0; margin-top: 0.08rem; }
+  .action-row strong { font-weight: 600; color: var(--navy); }
+
+  /* ── OPS PANEL ── */
+  .ops-table { width: 100%; border-collapse: collapse; }
+  .ops-table tr { border-bottom: 1px solid var(--rule); transition: background 0.15s; }
+  .ops-table tr:last-child { border-bottom: none; }
+  .ops-table tr:hover { background: var(--pale); }
+  .ops-icon { width: 52px; text-align: center; padding: 1rem 0; font-size: 1.1rem; vertical-align: top; }
+  .ops-focus { width: 170px; padding: 1rem 0.75rem 1rem 0; vertical-align: top; }
+  .ops-focus-label { font-size: 0.75rem; font-weight: 600; color: var(--navy); line-height: 1.3; }
+  .ops-action { padding: 1rem 1.5rem 1rem 0; font-size: 0.845rem; line-height: 1.7; color: var(--charcoal); font-weight: 300; vertical-align: top; }
+  .status-red    .ops-focus-label { color: var(--red); }
+  .status-amber  .ops-focus-label { color: var(--orange); }
+  .status-green  .ops-focus-label { color: var(--green); }
+  .status-red    { background: rgba(176,48,32,0.025); }
+  .status-amber  { background: rgba(200,130,28,0.025); }
+  .ops-legend {
+    display: flex; gap: 1.5rem; padding: 0.75rem 1.5rem;
+    background: var(--pale); border-top: 1px solid var(--rule);
+    font-size: 0.68rem; font-weight: 500; color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .ops-legend span { display: flex; align-items: center; gap: 0.3rem; }
+
+  /* ── EXTERNAL PANEL ── */
+  .ext-body { padding: 1.75rem 1.5rem; }
+  .ext-para { font-size: 0.935rem; line-height: 1.85; color: var(--charcoal); font-weight: 300; margin-bottom: 1.1rem; }
+  .ext-para:last-child { margin-bottom: 0; }
+  .ext-warning {
+    margin: 0; padding: 0.9rem 1.5rem;
+    background: var(--red-bg);
+    border-top: 1px solid rgba(176,48,32,0.15);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--red);
+    font-weight: 400;
+  }
+  .ext-warning strong { font-weight: 700; }
+
+  /* ── FOOTER ── */
+  .card-footer {
+    padding: 0.65rem 1.5rem;
+    background: var(--pale);
+    border-top: 1px solid var(--rule);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── ANIMATIONS ── */
+  .panel.active { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-title">Acme<span> Corporation</span></div>
+  <div class="masthead-meta">
+    Q2 FY2025 Financial Results<br>
+    Period: Apr – Jun 2025 &nbsp;|&nbsp; AUD $000s<br>
+    CFO Signed Off &nbsp;|&nbsp; Single Source of Truth
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)">
+    <span class="tab-label">Audience 1</span>
+    <span class="tab-name">Board of Directors</span>
+    <span class="tab-pill pill-gov">Governance</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(1)">
+    <span class="tab-label">Audience 2</span>
+    <span class="tab-name">Executive Team</span>
+    <span class="tab-pill pill-dec">Decision</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(2)">
+    <span class="tab-label">Audience 3</span>
+    <span class="tab-name">Operational Managers</span>
+    <span class="tab-pill pill-act">Action</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(3)">
+    <span class="tab-label">Audience 4</span>
+    <span class="tab-name">External Stakeholders</span>
+    <span class="tab-pill pill-ext">Approved Only</span>
+  </button>
+</div>
+
+<!-- CARD -->
+<div class="card">
+
+  <!-- ══════════════════════════════════════════
+       PANEL 1: BOARD
+  ══════════════════════════════════════════ -->
+  <div class="panel active" id="panel-0">
+
+    <div class="sec-hdr blue">Performance Headline</div>
+    <div class="headline-block">
+      Group revenue of $9,755k beat budget by $355k (+3.8%) and exceeded the prior period by $575k (+6.3%). NPAT of $770k was $175k above budget (+29.4%). EBITDA of $2,207k was $143k below budget (−6.1%), partly offset by a $160k approved marketing deferral and $132k salary savings from two Technology BU vacancies.
+    </div>
+
+    <div class="sec-hdr blue">Material Movements</div>
+    <div class="sub-grid">
+      <div class="sub-lbl">Revenue &amp; EBITDA</div>
+      <div class="sub-txt">Revenue beat reflects three Technology BU enterprise contracts, two pulled forward from Q3 (confirmed by Technology GM). Gross margin held at 66.5%. EBITDA missed budget on Legal &amp; Compliance costs of $500k vs budget $298k (+$202k, +67.8%) — driver unconfirmed; GC to report by 15 Jul. Marketing deferral ($160k) and salary savings ($132k) partially offset the miss.</div>
+      <div class="sub-lbl">EBIT, NPAT &amp; Tax</div>
+      <div class="sub-txt">EBIT of $1,285k exceeded budget by $260k (+25.4%); D&amp;A stable at $922k. NPAT of $770k beat budget by $175k (+29.4%). Tax charge of $330k was $75k above budget (+29.4%) — higher Technology BU taxable income at statutory rate; no adjusting items.</div>
+      <div class="sub-lbl">Cash &amp; Working Capital</div>
+      <div class="sub-txt" style="border-bottom:none;">Cash of $5,320k was $520k above budget (+10.8%). Revolving credit drawn $800k within the board-approved $2,000k limit. Net working capital of $2,895k is above the $2,500k policy minimum. DSO extended to 52 days (+7 days) — full movement requires confirmation. Net debt $1,320k within covenant thresholds.</div>
+    </div>
+
+    <div class="sec-hdr amber">Risks &amp; Watch Items</div>
+    <div class="risk-grid">
+      <div class="risk-lbl">Q3 Revenue Pipeline</div>
+      <div class="risk-txt">Two Q2 enterprise deals were pulled forward from Q3, reducing pipeline coverage. Q3 revenue target is at risk. Board to approve revised Q3 forecast at 28 Jul meeting.</div>
+      <div class="risk-lbl">Operations BU Margin</div>
+      <div class="risk-txt">EBITDA margin fell to 8.9% in Q2 from 18.4% in Q1 on a $490k revenue decline with fixed headcount. Recovery options to be presented at August ExCo.</div>
+      <div class="risk-lbl">Legal &amp; Compliance Run-Rate</div>
+      <div class="risk-txt">Q2 costs of $500k compare to $278k in Q1. If Q3 recurs at this rate, FY2025 legal costs will exceed budget by ~$450k. Driver unconfirmed. GC explanation due 15 Jul.</div>
+      <div class="risk-lbl">Doubtful Debt</div>
+      <div class="risk-txt" style="border-bottom:none;">Provision increased $45k in Q2; one client in administration. No write-off taken. Receivables team monitoring.</div>
+    </div>
+
+    <div class="sec-hdr red">Decisions Required from the Board</div>
+    <div class="decision-block">
+      <div class="decision-item">
+        <div class="decision-num">1</div>
+        <div>Approve the revised Q3 revenue forecast (Technology BU pipeline pull-forward). To be tabled 28 July.</div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-num">2</div>
+        <div>Receive GC's explanation of Legal &amp; Compliance variance ($202k, +67.8%) and approve any further engagement if costs are expected to continue at Q2 levels.</div>
+      </div>
+    </div>
+
+    <div class="card-footer">Source: Acme Corporation — Key Financial Results (CFO Signed Off) &nbsp;|&nbsp; All figures AUD $000s &nbsp;|&nbsp; Q2 FY2025</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 2: EXECUTIVE TEAM
+  ══════════════════════════════════════════ -->
+  <div class="panel" id="panel-1">
+
+    <div class="sec-hdr blue">What Changed</div>
+    <div class="exec-block">
+      <div class="exec-row"><span class="exec-bullet">◆</span><div>Revenue $9,755k — $355k above budget (+3.8%), $575k above prior period (+6.3%).</div></div>
+      <div class="exec-row"><span class="exec-bullet">◆</span><div>NPAT $770k beat budget by $175k (+29.4%).</div></div>
+      <div class="exec-row"><span class="exec-bullet">◆</span><div>EBITDA $2,207k missed budget by $143k (−6.1%); Legal &amp; Compliance drove the miss — driver unconfirmed.</div></div>
+      <div class="exec-row"><span class="exec-bullet">◆</span><div>Cash $5,320k, $520k above budget (+10.8%).</div></div>
+    </div>
+
+    <div class="sec-hdr green">Why — Confirmed Drivers</div>
+    <div class="exec-block">
+      <div class="exec-row"><span class="exec-bullet">✓</span><div><strong>Revenue:</strong> Three Technology BU enterprise deals, two pulled from Q3 (Technology GM confirmed).</div></div>
+      <div class="exec-row"><span class="exec-bullet">✓</span><div><strong>Marketing:</strong> $160k underspend — agency change; deferral to Q3 approved.</div></div>
+      <div class="exec-row"><span class="exec-bullet">✓</span><div><strong>Salaries:</strong> $132k under budget — two Technology BU vacancies unfilled.</div></div>
+      <div class="exec-row"><span class="exec-bullet">✓</span><div><strong>Tax:</strong> $75k above budget at statutory rate on higher Technology BU income.</div></div>
+      <div class="exec-row"><span class="exec-bullet">✓</span><div><strong>Revolving credit:</strong> $800k drawn within $2,000k board-approved limit.</div></div>
+    </div>
+
+    <div class="sec-hdr amber">Requires Confirmation</div>
+    <div class="exec-block">
+      <div class="confirm-row"><div class="confirm-dot"></div><div>Legal &amp; Compliance $500k vs $298k (+$202k, +67.8%) — GC to report by <strong>15 Jul</strong>.</div></div>
+      <div class="confirm-row"><div class="confirm-dot"></div><div>Operations Logistics $428k vs $295k (+$133k, +45.1%) — COO to report by <strong>15 Jul</strong>.</div></div>
+      <div class="confirm-row"><div class="confirm-dot"></div><div>Technology Materials &amp; Fulfilment $120k above budget (+19.4%) — Technology GM to confirm by <strong>15 Jul</strong>.</div></div>
+      <div class="confirm-row" style="border-bottom:none;"><div class="confirm-dot"></div><div>DSO 52 days (+7 days on prior) — AR report due <strong>18 Jul</strong>.</div></div>
+    </div>
+
+    <div class="sec-hdr red">Decisions &amp; Actions Required</div>
+    <div class="exec-block" style="background:var(--red-bg);">
+      <div class="action-row"><span class="action-num">1.</span><div><strong>COO:</strong> Written explanation of Logistics variance ($133k) by 15 Jul.</div></div>
+      <div class="action-row"><span class="action-num">2.</span><div><strong>GC:</strong> Written explanation of Legal &amp; Compliance variance ($202k) by 15 Jul.</div></div>
+      <div class="action-row"><span class="action-num">3.</span><div><strong>CFO:</strong> Operations BU recovery options at August ExCo.</div></div>
+      <div class="action-row" style="border-bottom:none;"><span class="action-num">4.</span><div><strong>All ExCo:</strong> Q3 forecast inputs required before 28 Jul Board meeting.</div></div>
+    </div>
+
+    <div class="card-footer">Source: Acme Corporation — Key Financial Results (CFO Signed Off) &nbsp;|&nbsp; All figures AUD $000s &nbsp;|&nbsp; Q2 FY2025</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 3: OPERATIONAL MANAGERS
+  ══════════════════════════════════════════ -->
+  <div class="panel" id="panel-2">
+    <div class="sec-hdr navy">Action Items &amp; Focus Areas</div>
+    <table class="ops-table">
+      <tbody>
+        <tr class="status-red">
+          <td class="ops-icon">🔴</td>
+          <td class="ops-focus"><span class="ops-focus-label">Legal &amp; Compliance</span></td>
+          <td class="ops-action">Legal &amp; Compliance $500k vs budget $298k (+$202k, +67.8%) — no driver confirmed. <strong>GC:</strong> written explanation by 15 Jul. Do not reference this variance in any communication until confirmed.</td>
+        </tr>
+        <tr class="status-red">
+          <td class="ops-icon">🔴</td>
+          <td class="ops-focus"><span class="ops-focus-label">Operations Logistics</span></td>
+          <td class="ops-action">Logistics $428k vs budget $295k (+$133k, +45.1%) — no driver confirmed. <strong>Operations GM:</strong> review contracts, identify savings, provide variance explanation to COO by 15 Jul.</td>
+        </tr>
+        <tr class="status-amber">
+          <td class="ops-icon">🟡</td>
+          <td class="ops-focus"><span class="ops-focus-label">Operations BU Margin</span></td>
+          <td class="ops-action">EBITDA margin 8.9% vs 18.4% in Q1 — $490k revenue decline on fixed headcount. <strong>Operations GM:</strong> prepare volume recovery or cost reduction options for CFO by August ExCo.</td>
+        </tr>
+        <tr class="status-amber">
+          <td class="ops-icon">🟡</td>
+          <td class="ops-focus"><span class="ops-focus-label">Accounts Receivable / DSO</span></td>
+          <td class="ops-action">DSO 52 days (+7 days on prior). <strong>AR Manager:</strong> aged receivables report with client-level DSO breakdown by 18 Jul; focus on the two clients on extended terms.</td>
+        </tr>
+        <tr class="status-amber">
+          <td class="ops-icon">🟡</td>
+          <td class="ops-focus"><span class="ops-focus-label">Technology — Materials &amp; Fulfilment</span></td>
+          <td class="ops-action">Materials &amp; Fulfilment $740k vs budget $620k (+$120k, +19.4%). <strong>Technology GM:</strong> formal driver confirmation and Q3 budget assessment by 15 Jul.</td>
+        </tr>
+        <tr>
+          <td class="ops-icon">🟢</td>
+          <td class="ops-focus"><span class="ops-focus-label">Revenue — Q3 Pipeline Watch</span></td>
+          <td class="ops-action">Revenue beat $355k (+3.8% vs budget). Two Q2 deals pulled from Q3 — <strong>Technology GM:</strong> confirm Q3 pipeline position and flag any shortfall to CFO before 28 Jul.</td>
+        </tr>
+        <tr>
+          <td class="ops-icon">🟢</td>
+          <td class="ops-focus"><span class="ops-focus-label">Salaries &amp; Headcount</span></td>
+          <td class="ops-action">Salaries $132k below budget (−3.7%) — two Technology BU vacancies. Escalate immediately if Q3 fill-date timeline slips.</td>
+        </tr>
+        <tr>
+          <td class="ops-icon">🟢</td>
+          <td class="ops-focus"><span class="ops-focus-label">Cash &amp; Working Capital</span></td>
+          <td class="ops-action">Cash $5,320k (+$520k vs budget, +10.8%). Net working capital $2,895k above $2,500k policy floor. Monitor DSO — further extension will pressure working capital.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ops-legend">
+      <span>🔴 Urgent Action Required</span>
+      <span>🟡 Monitor / Action Required</span>
+      <span>🟢 Positive / No Action</span>
+    </div>
+    <div class="card-footer">Source: Acme Corporation — Key Financial Results (CFO Signed Off) &nbsp;|&nbsp; All figures AUD $000s &nbsp;|&nbsp; Q2 FY2025</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 4: EXTERNAL STAKEHOLDERS
+  ══════════════════════════════════════════ -->
+  <div class="panel" id="panel-3">
+    <div class="sec-hdr blue">Approved Communication — Q2 FY2025</div>
+    <div class="ext-body">
+      <p class="ext-para">Acme Corporation is pleased to report the following results for Q2 FY2025, for the period ended 30 June 2025.</p>
+      <p class="ext-para">Acme Corporation delivered group revenue of $9.8 million for Q2 FY2025, ahead of budget and up 6.3% on the prior period, reflecting strong enterprise demand in our Technology division.</p>
+      <p class="ext-para">Group EBITDA of $2.2 million represents a 22.6% margin, an improvement of 2.9 percentage points on the prior period.</p>
+      <p class="ext-para">The Group maintained a strong cash position of $5.3 million at 30 June 2025, with net working capital above policy thresholds.</p>
+      <p class="ext-para">The Company does not provide forward earnings guidance. Management continues to monitor pipeline conversion and cost trends.</p>
+      <p class="ext-para" style="color:var(--muted);font-size:0.8rem;">This communication has been prepared in accordance with information available as at the date of issue and reflects results for Q2 FY2025 only.</p>
+    </div>
+    <div class="ext-warning">
+      <strong>NOT APPROVED FOR EXTERNAL USE:</strong> Any specific reference to individual contract names, client identities, legal matters, or Q3 revenue forecasts is NOT approved for external use. Do not speculate on forward-looking performance or provide explanations beyond the approved statements above.
+    </div>
+    <div class="card-footer">Source: Acme Corporation — Approved Statements (CFO Signed Off) &nbsp;|&nbsp; Q2 FY2025</div>
+  </div>
+
+</div><!-- /card -->
+
+<script>
+  function switchTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+    document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  }
+</script>
+</body>
+</html>
