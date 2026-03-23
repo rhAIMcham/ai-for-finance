@@ -1,0 +1,165 @@
+
+<style>
+.tab-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 14px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
+.tab-btn.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+.bu-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 5px 11px; font-size: 12px; color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
+.bu-btn.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); }
+.metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 16px; }
+.metric-label { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 4px; }
+.metric-value { font-size: 20px; font-weight: 500; margin: 0; }
+.metric-sub { font-size: 11px; color: var(--color-text-secondary); margin: 2px 0 0; }
+</style>
+
+<div style="padding: 1rem 0">
+<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+  <button class="tab-btn active" onclick="setView('group')">Group total</button>
+  <button class="tab-btn" onclick="setView('bu')">By business unit</button>
+  <span id="bu-selector" style="display:none;gap:6px;display:none;flex-wrap:wrap;">
+    <button class="bu-btn active" onclick="setBU('Technology')">Technology</button>
+    <button class="bu-btn" onclick="setBU('Operations')">Operations</button>
+    <button class="bu-btn" onclick="setBU('Corporate')">Corporate</button>
+  </span>
+</div>
+
+<div id="metric-row" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px;"></div>
+
+<div style="position:relative;width:100%;height:300px;">
+  <canvas id="mainChart"></canvas>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:12px;color:var(--color-text-secondary);">
+  <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>Revenue actual ($000s)</span>
+  <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#9FE1CB"></span>Revenue budget ($000s)</span>
+  <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;background:#BA7517;display:inline-block;border-radius:2px;"></span><span style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:6px solid #BA7517;display:inline-block;margin-left:-2px"></span>Variance % (rhs)</span>
+  <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#F0997B;opacity:.6"></span>Unfav variance</span>
+</div>
+
+<p style="font-size:11px;color:var(--color-text-secondary);margin:10px 0 0;">All values AUD $000s. Positive variance = Actual &gt; Budget. Source: FY2024–FY2025 management accounts.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const RAW = [
+  {bu:'Technology', q:'Q1 FY24', a:4250,b:4100,v:150,vp:3.7},
+  {bu:'Technology', q:'Q2 FY24', a:4480,b:4300,v:180,vp:4.2},
+  {bu:'Technology', q:'Q3 FY24', a:4620,b:4500,v:120,vp:2.7},
+  {bu:'Technology', q:'Q4 FY24', a:5100,b:4800,v:300,vp:6.3},
+  {bu:'Technology', q:'Q1 FY25', a:5350,b:5200,v:150,vp:2.9},
+  {bu:'Technology', q:'Q2 FY25', a:5490,b:5300,v:190,vp:3.6},
+  {bu:'Operations', q:'Q1 FY24', a:3100,b:3200,v:-100,vp:-3.1},
+  {bu:'Operations', q:'Q2 FY24', a:2980,b:3100,v:-120,vp:-3.9},
+  {bu:'Operations', q:'Q3 FY24', a:3050,b:3000,v:50,vp:1.7},
+  {bu:'Operations', q:'Q4 FY24', a:3250,b:3200,v:50,vp:1.6},
+  {bu:'Operations', q:'Q1 FY25', a:3180,b:3300,v:-120,vp:-3.6},
+  {bu:'Operations', q:'Q2 FY25', a:2690,b:3100,v:-410,vp:-13.2},
+  {bu:'Corporate', q:'Q1 FY24', a:320,b:300,v:20,vp:6.7},
+  {bu:'Corporate', q:'Q2 FY24', a:295,b:300,v:-5,vp:-1.7},
+  {bu:'Corporate', q:'Q3 FY24', a:310,b:300,v:10,vp:3.3},
+  {bu:'Corporate', q:'Q4 FY24', a:335,b:320,v:15,vp:4.7},
+  {bu:'Corporate', q:'Q1 FY25', a:340,b:330,v:10,vp:3.0},
+  {bu:'Corporate', q:'Q2 FY25', a:575,b:600,v:-25,vp:-4.2},
+];
+const QTRS = ['Q1 FY24','Q2 FY24','Q3 FY24','Q4 FY24','Q1 FY25','Q2 FY25'];
+
+function groupData() {
+  return QTRS.map(q => {
+    const rows = RAW.filter(r=>r.q===q);
+    const a = rows.reduce((s,r)=>s+r.a,0);
+    const b = rows.reduce((s,r)=>s+r.b,0);
+    const v = a-b;
+    return {q,a,b,v,vp:b?+(v/b*100).toFixed(1):0};
+  });
+}
+function buData(bu) { return QTRS.map(q => RAW.find(r=>r.bu===bu&&r.q===q)||null); }
+
+let view='group', currentBU='Technology', chartInst=null;
+
+function barColor(v) { return v>=0?'#378ADD':'#F0997B'; }
+function barColorBudget() { return '#9FE1CB'; }
+
+function buildChart(labels, actual, budget, varpct) {
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  if(chartInst) chartInst.destroy();
+  const barColors = actual.map((a,i)=>barColor(a-(budget[i]||0)));
+  chartInst = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        {type:'bar',label:'Revenue actual ($000s)',data:actual,backgroundColor:barColors,borderRadius:3,order:2,yAxisID:'y'},
+        {type:'bar',label:'Revenue budget ($000s)',data:budget,backgroundColor:barColorBudget(),borderRadius:3,order:3,yAxisID:'y'},
+        {type:'line',label:'Variance %',data:varpct,borderColor:'#BA7517',backgroundColor:'rgba(186,117,23,.12)',pointBackgroundColor:varpct.map(v=>v===null?'transparent':v>=0?'#639922':'#E24B4A'),pointRadius:5,pointHoverRadius:7,borderWidth:2,tension:.3,order:1,yAxisID:'y2',spanGaps:false},
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label(ctx){
+              if(ctx.dataset.yAxisID==='y2') return ` Variance %: ${ctx.parsed.y===null?'n/a':ctx.parsed.y.toFixed(1)+'%'}`;
+              const prefix = ctx.dataset.label.includes('actual')?'Actual':'Budget';
+              return ` ${prefix}: $${ctx.parsed.y.toLocaleString()}k`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#888',font:{size:12}},grid:{display:false}},
+        y:{position:'left',title:{display:true,text:'AUD $000s',color:'#888',font:{size:11}},ticks:{color:'#888',font:{size:11},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(128,128,128,.08)'}},
+        y2:{position:'right',title:{display:true,text:'Variance %',color:'#BA7517',font:{size:11}},ticks:{color:'#BA7517',font:{size:11},callback:v=>v.toFixed(1)+'%'},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function renderMetrics(data) {
+  const totalA = data.reduce((s,d)=>s+(d?d.a:0),0);
+  const totalB = data.reduce((s,d)=>s+(d?d.b:0),0);
+  const totalV = totalA-totalB;
+  const latestVP = [...data].reverse().find(d=>d!==null);
+  const maxUnfav = data.reduce((worst,d)=>{ if(d&&d.vp<(worst?worst.vp:0))return d; return worst; },null);
+  const row = document.getElementById('metric-row');
+  const cards = [
+    {label:'Total actual (period)',val:'$'+totalA.toLocaleString()+'k',sub:'vs $'+totalB.toLocaleString()+'k budget'},
+    {label:'Total variance $',val:(totalV>=0?'+':'')+'$'+totalV.toLocaleString()+'k',sub:totalV>=0?'Favourable':'Unfavourable',color:totalV>=0?'#639922':'#E24B4A'},
+    {label:'Latest quarter var %',val:latestVP?(latestVP.vp>=0?'+':'')+latestVP.vp.toFixed(1)+'%':'—',sub:latestVP?latestVP.q:'',color:latestVP&&latestVP.vp<0?'#E24B4A':'#639922'},
+    {label:'Worst quarter',val:maxUnfav?maxUnfav.vp.toFixed(1)+'%':'—',sub:maxUnfav?maxUnfav.q+' (unfavourable)':'All favourable',color:'#E24B4A'},
+  ];
+  row.innerHTML = cards.map(c=>`
+    <div class="metric-card">
+      <p class="metric-label">${c.label}</p>
+      <p class="metric-value" style="${c.color?'color:'+c.color:''}">${c.val}</p>
+      <p class="metric-sub">${c.sub}</p>
+    </div>`).join('');
+}
+
+function setView(v) {
+  view=v;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',[v==='group',v==='bu'][i]));
+  const buSel = document.getElementById('bu-selector');
+  buSel.style.display = v==='bu'?'flex':'none';
+  render();
+}
+
+function setBU(bu) {
+  currentBU=bu;
+  document.querySelectorAll('.bu-btn').forEach(b=>b.classList.toggle('active',b.textContent===bu));
+  render();
+}
+
+function render() {
+  if(view==='group'){
+    const data = groupData();
+    buildChart(data.map(d=>d.q), data.map(d=>d.a), data.map(d=>d.b), data.map(d=>d.vp));
+    renderMetrics(data);
+  } else {
+    const data = buData(currentBU);
+    buildChart(QTRS, data.map(d=>d?d.a:null), data.map(d=>d?d.b:null), data.map(d=>d?d.vp:null));
+    renderMetrics(data);
+  }
+}
+
+render();
+</script>
