@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>AI error</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --AIMblue: #4353A3;
+    --darkBlue: #38416D;
+    --teal: #5DC8B9;
+    --cream: #F1EEDE;
+    --grey: #e7e9ec;
+    --rust: #AF4510;
+    --navy: #12195C;
+    --white: #ffffff;
+    --lightBlue: #AEBAE4;
+}
+
+input {
+    border: none;
+    width: fit-content;
+}
+
+body {
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+table {
+    width: 100%;
+    margin:0;
+    padding:0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    text-align: left;
+}
+
+table tr {
+    border: 1px solid var(--AIMblue);
+    padding: 5px;
+}
+
+table th, table td {
+    border: 1px solid var(--AIMblue);
+    padding: 10px;
+}
+
+table th {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    background-color: var(--darkBlue);
+    color: var(--white);
+}
+
+tr:nth-child(even) {
+    background-color: var(--grey); /*Grey of torment!*/
+} 
+
+tr:nth-child(odd) {
+    background-color: white; 
+} 
+
+.high {
+background-color: orange;
+}
+
+@media screen and (max-width: 700px) {
+
+table {
+    border: 0;
+    border: none;
+}
+
+table thead {
+    display: none;
+}
+
+table tr {
+    margin-bottom: 10px;
+    display: block;
+    border-bottom: 2px solid var(--AIMblue);
+    border-left: 1px solid var(--lightBlue);
+    border-right: 1px solid var(--lightBlue);
+    border-top: 1px solid var(--lightBlue);
+}
+
+table td {
+    display: block;
+    text-align: right;
+    font-size: 13px;
+    border-bottom: 1px dotted var(--rust);
+    border-left: 0px dotted #ccc;
+    border-right: 0px dotted #ccc;
+    border-top: 0px dotted #ccc;
+}
+
+table td:last-child {
+    border-bottom: 0;
+}
+
+table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+}
+colgroup {
+    display: none;
+}
+}
+
+</style>
+  </head>
+<body>
+<table>
+ <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 40%;">
+        <col style="width: 40%;">
+      </colgroup>
+  <thead>
+    <th>Error</th>
+    <th>What happens</th>
+    <th>Financial reporting risk</th>
+  </thead>
+  <tbody>
+    <tr>
+        <td data-label="Error">
+  Hallucination
+        </td>
+        <td data-label="What happens">
+           The AI generates information that is not in the source data. It may invent a figure, fabricate an explanation, or cite a standard that does not exist.
+        </td>
+        <td data-label="Financial reporting risk">
+            Incorrect figures or fabricated content in reports could mislead decision-makers and breach reporting obligations.
+        </td>
+    </tr>
+        <tr>
+        <td data-label="Error">
+        Calculation errors
+        </td>
+        <td data-label="What happens">
+           The AI performs arithmetic incorrectly or applies the wrong formula. This is more common in complex or multi-step calculations.
+        </td>
+        <td data-label="Financial reporting risk">
+            Incorrect totals, percentages or variances in financial reports.
+        </td>
+    </tr>
+        <tr>
+        <td data-label="Error">
+        Context gaps
+        </td>
+        <td data-label="What happens">
+            The AI does not know about events, decisions or circumstances not included in the data. It cannot account for a restructure, a new contract or a regulatory change it has not been told about.
+        </td>
+        <td data-label="Financial reporting risk">
+          Commentary that misses material context, leading to incomplete or misleading narratives.
+        </td>
+    </tr>
+    <tr>
+        <td data-label="Error">
+       Outdated information
+        </td>
+        <td data-label="What happens">
+           The AI's training data has a cutoff date. It may reference accounting standards, tax rates or regulatory requirements that have since changed.
+        </td>
+        <td data-label="Financial reporting risk">
+            Reports that reference incorrect or superseded regulatory requirements.
+        </td>
+    </tr>
+    <tr>
+        <td data-label="Error">
+       Bias and framing
+        </td>
+        <td data-label="What happens">
+           The AI may frame results more positively or negatively than warranted or emphasise certain items over others based on patterns in its training data rather than materiality.
+        </td>
+        <td data-label="Financial reporting risk">
+            Management commentary that does not fairly represent the organisation's financial position.
+        </td>
+    </tr>
+        <tr>
+        <td data-label="Error">
+      Inconsistency
+        </td>
+        <td data-label="What happens">
+           Different prompts about the same data may produce different results. The AI may round figures differently, use different terminology, or frame the same variance differently each time.
+        </td>
+        <td data-label="Financial reporting risk">
+            Inconsistent reporting across sections, periods or reports.
+        </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
