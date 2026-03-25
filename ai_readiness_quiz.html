@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta lang="en">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<title>AI readiness quiz</title>
+<style>
+    .checkContainer {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+    
+    :root {
+        --AIMblue: #4353A3;
+        --darkBlue: #38416D;
+        --teal: #5DC8B9;
+        --cream: #F1EEDE;
+        --grey: #e7e9ec;
+        --rust: #AF4510;
+        --navy: #12195C;
+        --white: #ffffff;
+        --lightBlue: #AEBAE4;
+    }
+
+    body {
+        font-family: "IBM Plex Sans", sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #F1EEDE30;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .slide-container {
+        padding: 30px;
+        padding-top: 15px;
+    }
+
+    .slide {
+        display: none;
+        width: 100%;
+    }
+
+    .slide.active {
+        display: block;
+    }
+
+    .slide h3 {
+        color: var(--AIMblue);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .checkContainer {
+        display: flex;
+        align-items: flex-start;
+        margin: 20px 0;
+        padding: 15px;
+        background-color: var(--grey);
+        border-radius: 8px;
+    }
+
+    .instructions {
+        display: flex;
+        padding-left: 30px;
+        background-color: var(--cream);
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border-left: 4px solid var(--AIMblue);
+    }
+
+    .instructions p {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--darkBlue);
+    }
+
+    .checkContainer p {
+        margin: 0;
+        margin-right: 15px;
+        flex-grow: 1;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    input[type="radio"] {
+        margin: 0;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 20px 30px;
+        background-color: var(--grey);
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--AIMblue);
+        background-color: var(--white);
+        color: var(--AIMblue);
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+        background-color: var(--lightBlue);
+    }
+
+    .nav-button.active {
+        background-color: var(--AIMblue);
+        color: var(--white);
+    }
+
+    .arrow-button {
+        padding: 10px 20px;
+        background-color: #5DC8B990;
+        color: black;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .arrow-button:hover:not(:disabled) {
+        background-color: var(--darkBlue);
+        color: white;
+    }
+
+    .arrow-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .submit-button {
+        padding: 15px 30px;
+        background-color: var(--teal);
+        color: var(--white);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 20px auto;
+        display: none;
+    }
+
+    .submit-button:hover {
+        background-color: #4db5a5;
+    }
+
+    .submit-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    #results {
+        max-width: 800px;
+        margin: 15px auto;
+        background-color: var(--cream);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: none;
+        padding: 30px;
+    }
+
+    #results h2 {
+        color: var(--AIMblue);
+        margin-top: 0;
+    }
+
+    #results h3 {
+        color: var(--darkBlue);
+        margin-top: 25px;
+    }
+
+    #results ul {
+        line-height: 1.8;
+        color: var(--darkBlue);
+    }
+
+    #results .score-display {
+        background-color: var(--teal);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar {
+        height: 6px;
+        background-color: var(--grey);
+        margin: 0 30px 20px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background-color: var(--teal);
+        transition: width 0.3s ease;
+        width: 10%;
+    }
+
+    @media screen and (max-width: 600px) {
+        .quiz-container {
+            margin: 0;
+        }
+
+        .slide-container,
+        .navigation,
+        .instructions {
+            padding: 15px;
+        }
+
+        .nav-buttons {
+            gap: 5px;
+        }
+
+        .nav-button {
+            width: 35px;
+            height: 35px;
+            font-size: 14px;
+        }
+
+        .arrow-button {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="instructions">
+        <p><strong>Instructions:</strong> Answer the 10 multiple-choice questions to assess your leadership tendencies. Each question has 4 options—select the statement that is most true for you.</p>
+    </div>
+
+    <div class="quiz-container">
+        <nav class="navigation" aria-label="Quiz navigation">
+            <div class="nav-buttons" role="tablist">
+                <button class="nav-button active" onclick="goToSlide(1)" role="tab" aria-selected="true" aria-controls="slide-1" id="tab-1" aria-label="Question 1">1</button>
+                <button class="nav-button" onclick="goToSlide(2)" role="tab" aria-selected="false" aria-controls="slide-2" id="tab-2" aria-label="Question 2">2</button>
+                <button class="nav-button" onclick="goToSlide(3)" role="tab" aria-selected="false" aria-controls="slide-3" id="tab-3" aria-label="Question 3">3</button>
+                <button class="nav-button" onclick="goToSlide(4)" role="tab" aria-selected="false" aria-controls="slide-4" id="tab-4" aria-label="Question 4">4</button>
+                <button class="nav-button" onclick="goToSlide(5)" role="tab" aria-selected="false" aria-controls="slide-5" id="tab-5" aria-label="Question 5">5</button>
+                <button class="nav-button" onclick="goToSlide(6)" role="tab" aria-selected="false" aria-controls="slide-6" id="tab-6" aria-label="Question 6">6</button>
+                <button class="nav-button" onclick="goToSlide(7)" role="tab" aria-selected="false" aria-controls="slide-7" id="tab-7" aria-label="Question 7">7</button>
+                <button class="nav-button" onclick="goToSlide(8)" role="tab" aria-selected="false" aria-controls="slide-8" id="tab-8" aria-label="Question 8">8</button>
+                <button class="nav-button" onclick="goToSlide(9)" role="tab" aria-selected="false" aria-controls="slide-9" id="tab-9" aria-label="Question 9">9</button>
+                <button class="nav-button" onclick="goToSlide(10)" role="tab" aria-selected="false" aria-controls="slide-10" id="tab-10" aria-label="Question 10">10</button>
+            </div>
+        </nav>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" role="progressbar"></div>
+        </div>
+        <form name="q1" onsubmit="return false" onchange="updateSubmitButton()">
+            <div class="slide-container" id="slideContainer" role="region" aria-live="polite">
+                <!-- Slide 1 -->
+                <fieldset class="slide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
+                    <legend>
+                        <h3>When deadlines are approaching, you usually…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-a">Step in and finish the work yourself to ensure it gets done</label>
+                        </p>
+                        <input type="radio" id="q1-a" name="question1" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-b">Reassign tasks and closely monitor progress daily</label>
+                        </p>
+                        <input type="radio" id="q1-b" name="question1" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-c">Check in, remove blockers, and support the team to deliver</label>
+                        </p>
+                        <input type="radio" id="q1-c" name="question1" value="c" autocomplete="off">
+                    </div>
+            
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q1-d">Trust the team will deliver and wait for updates</label>
+                        </p>
+                        <input type="radio" id="q1-d" name="question1" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 2 -->
+                <fieldset class="slide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
+                    <legend>
+                        <h3>When team members make mistakes, you typically…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-a">Fix it quietly to avoid delays</label>
+                        </p>
+                        <input type="radio" id="q2-a" name="question2" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-b">Correct it and explain what they should have done</label>
+                        </p>
+                        <input type="radio" id="q2-b" name="question2" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-c">Coach them to diagnose and improve their approach</label>
+                        </p>
+                        <input type="radio" id="q2-c" name="question2" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q2-d">Let them learn naturally, even if performance dips short-term</label>
+                        </p>
+                        <input type="radio" id="q2-d" name="question2" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 3 -->
+                <fieldset class="slide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
+                    <legend>
+                        <h3>How often do people rely on you for decisions they could make themselves?</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-a">Almost always</label>
+                        </p>
+                        <input type="radio" id="q3-a" name="question3" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-b">Frequently</label>
+                        </p>
+                        <input type="radio" id="q3-b" name="question3" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-c">Occasionally</label>
+                        </p>
+                        <input type="radio" id="q3-c" name="question3" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q3-d">Rarely</label>
+                        </p>
+                        <input type="radio" id="q3-d" name="question3" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 4 -->
+                <fieldset class="slide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
+                    <legend>
+                        <h3>When you delegate tasks, what happens most often?</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-a">I end up taking them back</label>
+                        </p>
+                        <input type="radio" id="q4-a" name="question4" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-b">I give them, but keep re-checking and adjusting</label>
+                        </p>
+                        <input type="radio" id="q4-b" name="question4" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-c">I delegate with clear outcomes and follow-up points</label>
+                        </p>
+                        <input type="radio" id="q4-c" name="question4" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q4-d">I delegate and fully step away</label>
+                        </p>
+                        <input type="radio" id="q4-d" name="question4" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 5 -->
+                <fieldset class="slide" id="slide-5" role="tabpanel" aria-labelledby="tab-5">
+                    <legend>
+                        <h3>Your calendar is often full because…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-a">I'm involved in nearly everything</label>
+                        </p>
+                        <input type="radio" id="q5-a" name="question5" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-b">I need to attend to make sure things don't fall apart</label>
+                        </p>
+                        <input type="radio" id="q5-b" name="question5" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-c">I'm needed for strategy, alignment and key decisions</label>
+                        </p>
+                        <input type="radio" id="q5-c" name="question5" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q5-d">I protect focus time and avoid being the bottleneck</label>
+                        </p>
+                        <input type="radio" id="q5-d" name="question5" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 6 -->
+                <fieldset class="slide" id="slide-6" role="tabpanel" aria-labelledby="tab-6">
+                    <legend>
+                        <h3>When the team is struggling, your first instinct is…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-a">Jump in and do it</label>
+                        </p>
+                        <input type="radio" id="q6-a" name="question6" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-b">Take full control until it stabilises</label>
+                        </p>
+                        <input type="radio" id="q6-b" name="question6" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-c">Ask what support, clarity or resources they need</label>
+                        </p>
+                        <input type="radio" id="q6-c" name="question6" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q6-d">Hold them accountable to figure it out</label>
+                        </p>
+                        <input type="radio" id="q6-d" name="question6" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 7 -->
+                <fieldset class="slide" id="slide-7" role="tabpanel" aria-labelledby="tab-7">
+                    <legend>
+                        <h3>How would you describe your team's ownership?</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-a">Low — they wait for direction</label>
+                        </p>
+                        <input type="radio" id="q7-a" name="question7" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-b">Inconsistent — some own, others avoid</label>
+                        </p>
+                        <input type="radio" id="q7-b" name="question7" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-c">Mostly good — small gaps exist</label>
+                        </p>
+                        <input type="radio" id="q7-c" name="question7" value="c" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q7-d">Strong — they lead and take responsibility</label>
+                        </p>
+                        <input type="radio" id="q7-d" name="question7" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 8 -->
+                <fieldset class="slide" id="slide-8" role="tabpanel" aria-labelledby="tab-8">
+                    <legend>
+                        <h3>If you take a week off unexpectedly…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-a">Things would stop or break</label>
+                        </p>
+                        <input type="radio" id="q8-a" name="question8" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-b">It would be chaotic, but they'd survive</label>
+                        </p>
+                        <input type="radio" id="q8-b" name="question8" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-c">Some things would slow, but core work would continue</label>
+                        </p>
+                        <input type="radio" id="q8-c" name="question8" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q8-d">The team would run smoothly</label>
+                        </p>
+                        <input type="radio" id="q8-d" name="question8" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 9 -->
+                <fieldset class="slide" id="slide-9" role="tabpanel" aria-labelledby="tab-9">
+                    <legend>
+                        <h3>In meetings, you usually…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-a">Speak most of the time and drive decisions</label>
+                        </p>
+                        <input type="radio" id="q9-a" name="question9" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-b">Frequently steer the conversation back on track</label>
+                        </p>
+                        <input type="radio" id="q9-b" name="question9" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-c">Facilitate, ask questions and clarify decisions</label>
+                        </p>
+                        <input type="radio" id="q9-c" name="question9" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q9-d">Mostly listen and let the team lead discussion</label>
+                        </p>
+                        <input type="radio" id="q9-d" name="question9" value="d" autocomplete="off">
+                    </div>
+                </fieldset>
+
+                <!-- Slide 10 -->
+                <fieldset class="slide" id="slide-10" role="tabpanel" aria-labelledby="tab-10">
+                    <legend>
+                        <h3>When a team member is underperforming, you tend to…</h3>
+                    </legend>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-a">Take over their work</label>
+                        </p>
+                        <input type="radio" id="q10-a" name="question10" value="a" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-b">Reduce their scope to protect outcomes</label>
+                        </p>
+                        <input type="radio" id="q10-b" name="question10" value="b" autocomplete="off">
+                    </div>
+                    
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-c">Address the issue directly and coach expectations</label>
+                        </p>
+                        <input type="radio" id="q10-c" name="question10" value="c" autocomplete="off">
+                    </div>
+
+                    <div class="checkContainer">
+                        <p>
+                            <label for="q10-d">Hold them accountable and escalate if needed</label>
+                        </p>
+                        <input type="radio" id="q10-d" name="question10" value="d" autocomplete="off">
+                    </div>
+                    <button class="submit-button" id="submitButton" onclick="formOne()" aria-label="Submit quiz and view results">
+                        Submit & View Results
+                    </button>
+                </fieldset>
+            </div>
+        </form>
+
+        <nav class="navigation" aria-label="Quiz navigation">
+            <button class="arrow-button" id="prevBtn" onclick="previousSlide()" aria-label="Previous question">
+                ← Previous
+            </button>
+            
+            <button class="arrow-button" id="nextBtn" onclick="nextSlide()" aria-label="Next question">
+                Next →
+            </button>
+        </nav>
+    </div>
+
+    <!-- Results Display -->
+    <div id="results" role="region" aria-live="polite" aria-label="Quiz results"></div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 10;
+
+function goToSlide(slideNumber) {
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(slide => slide.classList.remove('active'));
+    
+    document.getElementById(`slide-${slideNumber}`).classList.add('active');
+    
+    currentSlide = slideNumber;
+    updateButtons();
+    updateArrowButtons();
+    updateProgressBar();
+    updateSubmitButton();
+}
+
+function nextSlide() {
+    if (currentSlide < totalSlides) {
+        goToSlide(currentSlide + 1);
+    }
+}
+
+function previousSlide() {
+    if (currentSlide > 1) {
+        goToSlide(currentSlide - 1);
+    }
+}
+
+function updateButtons() {
+    const buttons = document.querySelectorAll('.nav-button');
+    buttons.forEach((btn, index) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        if (index === currentSlide - 1) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+        }
+    });
+}
+
+function updateArrowButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    prevBtn.disabled = currentSlide === 1;
+    nextBtn.disabled = currentSlide === totalSlides;
+}
+
+function updateProgressBar() {
+    const progressFill = document.getElementById('progressFill');
+    const progress = (currentSlide / totalSlides) * 100;
+    progressFill.style.width = `${progress}%`;
+}
+
+function updateSubmitButton() {
+    const submitButton = document.getElementById('submitButton');
+    if (currentSlide === totalSlides) {
+        submitButton.style.display = 'block';
+        
+        // Check if all questions are answered
+        const form = document.forms['q1'];
+        let answeredCount = 0;
+        
+        for (let i = 1; i <= 10; i++) {
+            const question = form.elements[`question${i}`];
+            if (question && question.value) {
+                answeredCount++;
+            }
+        }
+        
+        // Enable button only if all 10 questions are answered
+        submitButton.disabled = answeredCount !== 10;
+    } else {
+        submitButton.style.display = 'none';
+    }
+}
+
+function formOne() {
+    const form = document.forms['q1'];
+    let totalScore = 0;
+    
+    // Score mapping: A=3, B=2, C=1, D=0
+    const scoreMap = {
+        'a': 3,
+        'b': 2,
+        'c': 1,
+        'd': 0
+    };
+    
+    for (let i = 1; i <= 10; i++) {
+        const question = form.elements[`question${i}`];
+        if (question && question.value) {
+            totalScore += scoreMap[question.value];
+        }
+    }
+    
+    // Don't submit if not all questions are answered
+    if (totalScore === 0) {
+        const allAnswered = Array.from({length: 10}, (_, i) => i + 1).every(i => {
+            const question = form.elements[`question${i}`];
+            return question && question.value;
+        });
+        
+        if (!allAnswered) {
+            return false;
+        }
+    }
+    
+    const results = document.getElementById("results");
+    results.style.display = "block";
+    
+    let resultHTML = `<div class="score-display">Your Score: ${totalScore} out of 30</div>`;
+    
+    if (totalScore >= 0 && totalScore <= 10) {
+        resultHTML += `
+            <h2>Functional leader of a functional (or developing) team</h2>
+            <p>You are supporting the team without rescuing them. You likely coach, clarify priorities, unblock issues and hold accountability - while still leaving ownership with the team.</p>
+            
+            <h3>Dynamic you're in:</h3>
+            <ul>
+                <li>Healthy delegation</li>
+                <li>Shared responsibility</li>
+                <li>Growth through coaching, not rescuing</li>
+                <li>You're not the system's "engine" — you're the guide</li>
+            </ul>
+            
+            <h3>Likely results:</h3>
+            <ul>
+                <li>Stronger capability over time</li>
+                <li>Higher trust + sustainable workload</li>
+                <li>A team that performs even when you're absent</li>
+            </ul>
+        `;
+    } else if (totalScore >= 11 && totalScore <= 20) {
+        resultHTML += `
+            <h2>Risk of sliding into over-functioning</h2>
+            <p>You're still trying to build capability, but you're compensating often. You might be the stability force that prevents failure — but also prevents learning.</p>
+            
+            <h3>Dynamic you're in:</h3>
+            <ul>
+                <li>The team learns "you'll catch it anyway"</li>
+                <li>You become the bottleneck</li>
+                <li>Standards may stay high, but ownership stays low</li>
+            </ul>
+            
+            <h3>Likely results:</h3>
+            <ul>
+                <li>You feel overworked</li>
+                <li>Team confidence stays mixed</li>
+                <li>Dependency increases</li>
+            </ul>
+        `;
+    } else if (totalScore >= 21 && totalScore <= 30) {
+        resultHTML += `
+            <h2>Over-functioning leader of an under-functioning team</h2>
+            <p>You're carrying more than your share of thinking, deciding and doing. The team may be capable, but the system has trained them to rely on you.</p>
+            
+            <h3>Dynamic you're in:</h3>
+            <ul>
+                <li>You rescue → team disengages</li>
+                <li>You over-own → team under-owns</li>
+                <li>You fill every gap → more gaps appear</li>
+                <li>You become the "hero" and the "bottleneck" at the same time</li>
+            </ul>
+            
+            <h3>Likely results:</h3>
+            <ul>
+                <li>Burnout risk increases</li>
+                <li>Decision speed slows</li>
+                <li>Team capability doesn't grow</li>
+                <li>People feel dependent or passive</li>
+            </ul>
+        `;
+    }
+    
+    results.innerHTML = resultHTML;
+    results.scrollIntoView({ behavior: 'smooth' });
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.target.tagName === 'INPUT') {
+        // Prevent Enter key from submitting the form
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            return;
+        }
+        return;
+    }
+    
+    if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        previousSlide();
+    } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        nextSlide();
+    }
+});
+
+updateArrowButtons();
+updateProgressBar();
+updateSubmitButton();
+</script>
+</body>
+</html>
