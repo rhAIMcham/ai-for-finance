@@ -58,7 +58,7 @@
     .slide h3 {
         color: var(--AIMblue);
         margin-bottom: 25px;
-        text-align: center;
+        text-align: left;
     }
 
     fieldset {
@@ -774,7 +774,7 @@ function formOne() {
     if (totalScore >= 36 && totalScore <= 40) {
         resultHTML += `
             <h2>Strong starting position (${totalScore}/40)</h2>
-            <p>Your organisation has the fundamentals in place — reliable data, repeatable processes, a capable team and governance that can support safe AI use. You can begin controlled pilots now, focusing on efficiency gains like drafting reporting commentary and summarising variances with clear human review.</p>
+            <p>Your organisation has the fundamentals in place - reliable data, repeatable processes, a capable team and governance that can support safe AI use. You can begin controlled pilots now, focusing on efficiency gains like drafting reporting commentary and summarising variances with clear human review.</p>
         `;
     } else if (totalScore >= 28 && totalScore <= 35) {
         resultHTML += `
@@ -789,7 +789,7 @@ function formOne() {
     } else if (totalScore >= 10 && totalScore <= 19) {
         resultHTML += `
             <h2>Work needed first (${totalScore}/40)</h2>
-            <p>Fragmented data, ad hoc processes, limited capacity or weak governance will make AI adoption inefficient and unsafe right now. Focus first on fixing the basics — source system discipline, clear ownership and controls — so AI can be introduced later with confidence.</p>
+            <p>Fragmented data, ad hoc processes, limited capacity or weak governance will make AI adoption inefficient and unsafe right now. Focus first on fixing the basics - source system discipline, clear ownership and controls - so AI can be introduced later with confidence.</p>
         `;
     }
     
