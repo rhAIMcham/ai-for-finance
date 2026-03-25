@@ -211,6 +211,11 @@
         color: var(--darkBlue);
     }
 
+    #results p {
+        color: var(--darkBlue);
+        line-height: 1.6;
+    }
+
     #results .score-display {
         background-color: var(--teal);
         color: white;
@@ -267,7 +272,7 @@
 </head>
 <body>
     <div class="instructions">
-        <p><strong>Instructions:</strong> Answer the 10 multiple-choice questions to assess your leadership tendencies. Each question has 4 options—select the statement that is most true for you.</p>
+        <p><strong>Instructions:</strong> Answer the 10 multiple-choice questions to assess your organisation's AI readiness. For each question, select the option that best matches your organisation today.</p>
     </div>
 
     <div class="quiz-container">
@@ -293,33 +298,33 @@
                 <!-- Slide 1 -->
                 <fieldset class="slide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
                     <legend>
-                        <h3>When deadlines are approaching, you usually…</h3>
+                        <h3>Where does your reporting data mostly come from?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q1-a">Step in and finish the work yourself to ensure it gets done</label>
+                            <label for="q1-a">Well-governed source systems with clear ownership and controlled access</label>
                         </p>
                         <input type="radio" id="q1-a" name="question1" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q1-b">Reassign tasks and closely monitor progress daily</label>
+                            <label for="q1-b">Mostly source systems, with a few controlled extracts/spreadsheets for edge cases</label>
                         </p>
                         <input type="radio" id="q1-b" name="question1" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q1-c">Check in, remove blockers, and support the team to deliver</label>
+                            <label for="q1-c">Multiple systems plus significant spreadsheet consolidation each period</label>
                         </p>
                         <input type="radio" id="q1-c" name="question1" value="c" autocomplete="off">
                     </div>
             
                     <div class="checkContainer">
                         <p>
-                            <label for="q1-d">Trust the team will deliver and wait for updates</label>
+                            <label for="q1-d">Fragmented sources with heavy manual workarounds and re-keying</label>
                         </p>
                         <input type="radio" id="q1-d" name="question1" value="d" autocomplete="off">
                     </div>
@@ -328,33 +333,33 @@
                 <!-- Slide 2 -->
                 <fieldset class="slide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
                     <legend>
-                        <h3>When team members make mistakes, you typically…</h3>
+                        <h3>How much time is spent fixing data issues during reporting cycles?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q2-a">Fix it quietly to avoid delays</label>
+                            <label for="q2-a">Minimal — issues are rare and quickly resolved at the source</label>
                         </p>
                         <input type="radio" id="q2-a" name="question2" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q2-b">Correct it and explain what they should have done</label>
+                            <label for="q2-b">Some — known issues occur but are manageable with standard fixes</label>
                         </p>
                         <input type="radio" id="q2-b" name="question2" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q2-c">Coach them to diagnose and improve their approach</label>
+                            <label for="q2-c">Frequent — data needs regular cleansing and adjustments before use</label>
                         </p>
                         <input type="radio" id="q2-c" name="question2" value="c" autocomplete="off">
                     </div>
 
                     <div class="checkContainer">
                         <p>
-                            <label for="q2-d">Let them learn naturally, even if performance dips short-term</label>
+                            <label for="q2-d">Significant — cleaning and patching data is a major part of every cycle</label>
                         </p>
                         <input type="radio" id="q2-d" name="question2" value="d" autocomplete="off">
                     </div>
@@ -363,33 +368,33 @@
                 <!-- Slide 3 -->
                 <fieldset class="slide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
                     <legend>
-                        <h3>How often do people rely on you for decisions they could make themselves?</h3>
+                        <h3>How standard are definitions and coding conventions (e.g. account mappings, cost centres, product/customer hierarchy)?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q3-a">Almost always</label>
+                            <label for="q3-a">Standard definitions exist and are consistently applied across teams and systems</label>
                         </p>
                         <input type="radio" id="q3-a" name="question3" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q3-b">Frequently</label>
+                            <label for="q3-b">Standards exist but occasional exceptions or local variations occur</label>
                         </p>
                         <input type="radio" id="q3-b" name="question3" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q3-c">Occasionally</label>
+                            <label for="q3-c">Some standards exist but are inconsistently applied; mappings are often revised</label>
                         </p>
                         <input type="radio" id="q3-c" name="question3" value="c" autocomplete="off">
                     </div>
 
                     <div class="checkContainer">
                         <p>
-                            <label for="q3-d">Rarely</label>
+                            <label for="q3-d">No reliable standards; definitions vary and coding is inconsistent</label>
                         </p>
                         <input type="radio" id="q3-d" name="question3" value="d" autocomplete="off">
                     </div>
@@ -398,33 +403,33 @@
                 <!-- Slide 4 -->
                 <fieldset class="slide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
                     <legend>
-                        <h3>When you delegate tasks, what happens most often?</h3>
+                        <h3>How would you describe your month-end reporting process?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q4-a">I end up taking them back</label>
+                            <label for="q4-a">Documented, repeatable, with clear owners, timelines, and dependencies</label>
                         </p>
                         <input type="radio" id="q4-a" name="question4" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q4-b">I give them, but keep re-checking and adjusting</label>
+                            <label for="q4-b">Mostly documented; a few steps rely on experience or local team practice</label>
                         </p>
                         <input type="radio" id="q4-b" name="question4" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q4-c">I delegate with clear outcomes and follow-up points</label>
+                            <label for="q4-c">Partly documented; outcomes depend on who is on the cycle</label>
                         </p>
                         <input type="radio" id="q4-c" name="question4" value="c" autocomplete="off">
                     </div>
 
                     <div class="checkContainer">
                         <p>
-                            <label for="q4-d">I delegate and fully step away</label>
+                            <label for="q4-d">Largely undocumented and dependent on individual knowledge</label>
                         </p>
                         <input type="radio" id="q4-d" name="question4" value="d" autocomplete="off">
                     </div>
@@ -433,33 +438,33 @@
                 <!-- Slide 5 -->
                 <fieldset class="slide" id="slide-5" role="tabpanel" aria-labelledby="tab-5">
                     <legend>
-                        <h3>Your calendar is often full because…</h3>
+                        <h3>What happens when someone new steps into a key reporting role?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q5-a">I'm involved in nearly everything</label>
+                            <label for="q5-a">They can follow documented procedures and templates with minimal disruption</label>
                         </p>
                         <input type="radio" id="q5-a" name="question5" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q5-b">I need to attend to make sure things don't fall apart</label>
+                            <label for="q5-b">They can ramp up with some coaching; most steps are clear</label>
                         </p>
                         <input type="radio" id="q5-b" name="question5" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q5-c">I'm needed for strategy, alignment and key decisions</label>
+                            <label for="q5-c">They need significant shadowing because key steps aren't written down</label>
                         </p>
                         <input type="radio" id="q5-c" name="question5" value="c" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q5-d">I protect focus time and avoid being the bottleneck</label>
+                            <label for="q5-d">Reporting quality/timelines suffer because knowledge is held by individuals</label>
                         </p>
                         <input type="radio" id="q5-d" name="question5" value="d" autocomplete="off">
                     </div>
@@ -468,33 +473,33 @@
                 <!-- Slide 6 -->
                 <fieldset class="slide" id="slide-6" role="tabpanel" aria-labelledby="tab-6">
                     <legend>
-                        <h3>When the team is struggling, your first instinct is…</h3>
+                        <h3>How consistent are your reporting outputs (templates, pack structure, commentary style)?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q6-a">Jump in and do it</label>
+                            <label for="q6-a">Highly consistent across teams and periods, with controlled templates</label>
                         </p>
                         <input type="radio" id="q6-a" name="question6" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q6-b">Take full control until it stabilises</label>
+                            <label for="q6-b">Mostly consistent; minor variations by team or leader preference</label>
                         </p>
                         <input type="radio" id="q6-b" name="question6" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q6-c">Ask what support, clarity or resources they need</label>
+                            <label for="q6-c">Variable; templates and commentary change frequently</label>
                         </p>
                         <input type="radio" id="q6-c" name="question6" value="c" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q6-d">Hold them accountable to figure it out</label>
+                            <label for="q6-d">Ad hoc; outputs differ widely and are rebuilt each period</label>
                         </p>
                         <input type="radio" id="q6-d" name="question6" value="d" autocomplete="off">
                     </div>
@@ -503,33 +508,33 @@
                 <!-- Slide 7 -->
                 <fieldset class="slide" id="slide-7" role="tabpanel" aria-labelledby="tab-7">
                     <legend>
-                        <h3>How would you describe your team's ownership?</h3>
+                        <h3>How does the team respond to new tools and process changes?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q7-a">Low — they wait for direction</label>
+                            <label for="q7-a">Curious and proactive — people suggest improvements and test ideas</label>
                         </p>
                         <input type="radio" id="q7-a" name="question7" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q7-b">Inconsistent — some own, others avoid</label>
+                            <label for="q7-b">Generally positive — open with guidance and a clear "why"</label>
                         </p>
                         <input type="radio" id="q7-b" name="question7" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q7-c">Mostly good — small gaps exist</label>
+                            <label for="q7-c">Cautious — will adopt only when mandated and supported heavily</label>
                         </p>
                         <input type="radio" id="q7-c" name="question7" value="c" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q7-d">Strong — they lead and take responsibility</label>
+                            <label for="q7-d">Resistant — change is seen as extra work and risk</label>
                         </p>
                         <input type="radio" id="q7-d" name="question7" value="d" autocomplete="off">
                     </div>
@@ -538,33 +543,33 @@
                 <!-- Slide 8 -->
                 <fieldset class="slide" id="slide-8" role="tabpanel" aria-labelledby="tab-8">
                     <legend>
-                        <h3>If you take a week off unexpectedly…</h3>
+                        <h3>Do you have the capacity to adopt AI-enabled ways of working?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q8-a">Things would stop or break</label>
+                            <label for="q8-a">Yes — time is allocated for improvement, training, and iteration</label>
                         </p>
                         <input type="radio" id="q8-a" name="question8" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q8-b">It would be chaotic, but they'd survive</label>
+                            <label for="q8-b">Some — small improvements are possible alongside BAU</label>
                         </p>
                         <input type="radio" id="q8-b" name="question8" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q8-c">Some things would slow, but core work would continue</label>
+                            <label for="q8-c">Limited — BAU pressure makes it hard to learn or redesign work</label>
                         </p>
                         <input type="radio" id="q8-c" name="question8" value="c" autocomplete="off">
                     </div>
 
                     <div class="checkContainer">
                         <p>
-                            <label for="q8-d">The team would run smoothly</label>
+                            <label for="q8-d">No — team is stretched; any change would likely disrupt delivery</label>
                         </p>
                         <input type="radio" id="q8-d" name="question8" value="d" autocomplete="off">
                     </div>
@@ -573,33 +578,33 @@
                 <!-- Slide 9 -->
                 <fieldset class="slide" id="slide-9" role="tabpanel" aria-labelledby="tab-9">
                     <legend>
-                        <h3>In meetings, you usually…</h3>
+                        <h3>How well are data governance and privacy practices embedded day-to-day?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q9-a">Speak most of the time and drive decisions</label>
+                            <label for="q9-a">Clear policies plus strong practice — access, classification and retention are followed</label>
                         </p>
                         <input type="radio" id="q9-a" name="question9" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q9-b">Frequently steer the conversation back on track</label>
+                            <label for="q9-b">Policies exist and are usually followed; occasional gaps are addressed</label>
                         </p>
                         <input type="radio" id="q9-b" name="question9" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q9-c">Facilitate, ask questions and clarify decisions</label>
+                            <label for="q9-c">Policies exist but aren't consistently applied or monitored</label>
                         </p>
                         <input type="radio" id="q9-c" name="question9" value="c" autocomplete="off">
                     </div>
 
                     <div class="checkContainer">
                         <p>
-                            <label for="q9-d">Mostly listen and let the team lead discussion</label>
+                            <label for="q9-d">Governance is informal; practices vary and enforcement is weak</label>
                         </p>
                         <input type="radio" id="q9-d" name="question9" value="d" autocomplete="off">
                     </div>
@@ -608,33 +613,33 @@
                 <!-- Slide 10 -->
                 <fieldset class="slide" id="slide-10" role="tabpanel" aria-labelledby="tab-10">
                     <legend>
-                        <h3>When a team member is underperforming, you tend to…</h3>
+                        <h3>Which statement best describes how you would govern gen AI use in reporting?</h3>
                     </legend>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q10-a">Take over their work</label>
+                            <label for="q10-a">We have (or can quickly implement) clear rules: approved use cases, human review, prompt/data handling, approvals and audit trails</label>
                         </p>
                         <input type="radio" id="q10-a" name="question10" value="a" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q10-b">Reduce their scope to protect outcomes</label>
+                            <label for="q10-b">We have general governance and could adapt it to AI with some work</label>
                         </p>
                         <input type="radio" id="q10-b" name="question10" value="b" autocomplete="off">
                     </div>
                     
                     <div class="checkContainer">
                         <p>
-                            <label for="q10-c">Address the issue directly and coach expectations</label>
+                            <label for="q10-c">We'd be starting from scratch; guardrails aren't defined yet</label>
                         </p>
                         <input type="radio" id="q10-c" name="question10" value="c" autocomplete="off">
                     </div>
 
                     <div class="checkContainer">
                         <p>
-                            <label for="q10-d">Hold them accountable and escalate if needed</label>
+                            <label for="q10-d">We're not ready — there's no consistent way to manage risk, approvals or accountability</label>
                         </p>
                         <input type="radio" id="q10-d" name="question10" value="d" autocomplete="off">
                     </div>
@@ -719,7 +724,6 @@ function updateSubmitButton() {
     if (currentSlide === totalSlides) {
         submitButton.style.display = 'block';
         
-        // Check if all questions are answered
         const form = document.forms['q1'];
         let answeredCount = 0;
         
@@ -730,7 +734,6 @@ function updateSubmitButton() {
             }
         }
         
-        // Enable button only if all 10 questions are answered
         submitButton.disabled = answeredCount !== 10;
     } else {
         submitButton.style.display = 'none';
@@ -741,97 +744,52 @@ function formOne() {
     const form = document.forms['q1'];
     let totalScore = 0;
     
-    // Score mapping: A=3, B=2, C=1, D=0
+    // Score mapping: A=4, B=3, C=2, D=1
     const scoreMap = {
-        'a': 3,
-        'b': 2,
-        'c': 1,
-        'd': 0
+        'a': 4,
+        'b': 3,
+        'c': 2,
+        'd': 1
     };
     
+    let allAnswered = true;
     for (let i = 1; i <= 10; i++) {
         const question = form.elements[`question${i}`];
         if (question && question.value) {
             totalScore += scoreMap[question.value];
+        } else {
+            allAnswered = false;
         }
     }
     
-    // Don't submit if not all questions are answered
-    if (totalScore === 0) {
-        const allAnswered = Array.from({length: 10}, (_, i) => i + 1).every(i => {
-            const question = form.elements[`question${i}`];
-            return question && question.value;
-        });
-        
-        if (!allAnswered) {
-            return false;
-        }
+    if (!allAnswered) {
+        return false;
     }
     
     const results = document.getElementById("results");
     results.style.display = "block";
     
-    let resultHTML = `<div class="score-display">Your Score: ${totalScore} out of 30</div>`;
+    let resultHTML = `<div class="score-display">Your Score: ${totalScore} out of 40</div>`;
     
-    if (totalScore >= 0 && totalScore <= 10) {
+    if (totalScore >= 36 && totalScore <= 40) {
         resultHTML += `
-            <h2>Functional leader of a functional (or developing) team</h2>
-            <p>You are supporting the team without rescuing them. You likely coach, clarify priorities, unblock issues and hold accountability - while still leaving ownership with the team.</p>
-            
-            <h3>Dynamic you're in:</h3>
-            <ul>
-                <li>Healthy delegation</li>
-                <li>Shared responsibility</li>
-                <li>Growth through coaching, not rescuing</li>
-                <li>You're not the system's "engine" — you're the guide</li>
-            </ul>
-            
-            <h3>Likely results:</h3>
-            <ul>
-                <li>Stronger capability over time</li>
-                <li>Higher trust + sustainable workload</li>
-                <li>A team that performs even when you're absent</li>
-            </ul>
+            <h2>Strong starting position (${totalScore}/40)</h2>
+            <p>Your organisation has the fundamentals in place — reliable data, repeatable processes, a capable team and governance that can support safe AI use. You can begin controlled pilots now, focusing on efficiency gains like drafting reporting commentary and summarising variances with clear human review.</p>
         `;
-    } else if (totalScore >= 11 && totalScore <= 20) {
+    } else if (totalScore >= 28 && totalScore <= 35) {
         resultHTML += `
-            <h2>Risk of sliding into over-functioning</h2>
-            <p>You're still trying to build capability, but you're compensating often. You might be the stability force that prevents failure — but also prevents learning.</p>
-            
-            <h3>Dynamic you're in:</h3>
-            <ul>
-                <li>The team learns "you'll catch it anyway"</li>
-                <li>You become the bottleneck</li>
-                <li>Standards may stay high, but ownership stays low</li>
-            </ul>
-            
-            <h3>Likely results:</h3>
-            <ul>
-                <li>You feel overworked</li>
-                <li>Team confidence stays mixed</li>
-                <li>Dependency increases</li>
-            </ul>
+            <h2>Good foundation (${totalScore}/40)</h2>
+            <p>You're well positioned to start, but a few gaps could limit scale or increase rework if ignored. Run small, low-risk AI trials while you tighten definitions, templates, review steps and AI guardrails.</p>
         `;
-    } else if (totalScore >= 21 && totalScore <= 30) {
+    } else if (totalScore >= 20 && totalScore <= 27) {
         resultHTML += `
-            <h2>Over-functioning leader of an under-functioning team</h2>
-            <p>You're carrying more than your share of thinking, deciding and doing. The team may be capable, but the system has trained them to rely on you.</p>
-            
-            <h3>Dynamic you're in:</h3>
-            <ul>
-                <li>You rescue → team disengages</li>
-                <li>You over-own → team under-owns</li>
-                <li>You fill every gap → more gaps appear</li>
-                <li>You become the "hero" and the "bottleneck" at the same time</li>
-            </ul>
-            
-            <h3>Likely results:</h3>
-            <ul>
-                <li>Burnout risk increases</li>
-                <li>Decision speed slows</li>
-                <li>Team capability doesn't grow</li>
-                <li>People feel dependent or passive</li>
-            </ul>
+            <h2>Early stage (${totalScore}/40)</h2>
+            <p>Core enablers aren't consistent yet, so AI benefits will be patchy and may add risk or workload rather than reduce it. Prioritise stabilising data, documenting processes and creating standard templates before expanding beyond basic drafting support.</p>
+        `;
+    } else if (totalScore >= 10 && totalScore <= 19) {
+        resultHTML += `
+            <h2>Work needed first (${totalScore}/40)</h2>
+            <p>Fragmented data, ad hoc processes, limited capacity or weak governance will make AI adoption inefficient and unsafe right now. Focus first on fixing the basics — source system discipline, clear ownership and controls — so AI can be introduced later with confidence.</p>
         `;
     }
     
@@ -841,7 +799,6 @@ function formOne() {
 
 document.addEventListener('keydown', function(event) {
     if (event.target.tagName === 'INPUT') {
-        // Prevent Enter key from submitting the form
         if (event.key === 'Enter') {
             event.preventDefault();
             return;
