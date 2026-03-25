@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Win Plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --AIMblue: #4353A3;
+            --darkBlue: #38416D;
+            --teal: #5DC8B9;
+            --cream: #F1EEDE;
+            --grey: #e7e9ec;
+            --rust: #AF4510;
+            --navy: #12195C;
+            --white: #ffffff;
+            --lightBlue: #AEBAE4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "IBM Plex Sans", sans-serif;
+            min-height: 90vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .reflection-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4353A3 0%, #12195C 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            border-color: var(--lightBlue);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .section-title {
+            color: var(--darkBlue);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .section-prompt {
+            color: #4a5568;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        /* Radio / checkbox option styles */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .option-label:hover {
+            border-color: var(--lightBlue);
+            background: #f7fafc;
+        }
+
+        .option-label input[type="radio"],
+        .option-label input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: var(--AIMblue);
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        .option-label.selected {
+            border-color: var(--AIMblue);
+            background: #eef0fa;
+        }
+
+        /* Date input */
+        .date-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            color: #2d3748;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(93, 200, 185, 0.1);
+        }
+
+        /* Prompt sub-sections */
+        .prompt-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .prompt-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--darkBlue);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .prompt-field .sub-prompt {
+            font-size: 12px;
+            font-style: italic;
+            color: #718096;
+            margin-bottom: 6px;
+        }
+
+        .reflection-input {
+            width: 100%;
+            min-height: 90px;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(93, 200, 185, 0.1);
+        }
+
+        .reflection-input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* "Other" text field for step 4 */
+        .other-text-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .other-text-input.visible {
+            display: block;
+        }
+
+        .other-text-input:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(93, 200, 185, 0.1);
+        }
+
+        /* Step number badge */
+        .step-badge {
+            display: inline-block;
+            background: var(--darkBlue);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .download-btn {
+            background: var(--AIMblue);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 83, 163, 0.3);
+        }
+
+        .download-btn:active { transform: translateY(0); }
+
+        /* Success Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .success-modal.active { display: flex; }
+
+        .success-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon {
+            width: 80px; height: 80px;
+            background: var(--teal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-icon svg {
+            width: 50px; height: 50px;
+            stroke: white; stroke-width: 3;
+            stroke-linecap: round; stroke-linejoin: round;
+            fill: none;
+        }
+
+        .success-title {
+            font-size: 24px; font-weight: 600;
+            color: var(--darkBlue); margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: #4a5568; line-height: 1.6; margin-bottom: 30px;
+        }
+
+        .success-btn {
+            background: var(--teal); color: white;
+            border: none; padding: 12px 30px;
+            border-radius: 6px; font-size: 14px;
+            font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .success-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 200, 185, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .reflection-container { padding: 25px; }
+            .section { padding: 20px; }
+            .section-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="reflection-container">
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <form id="planForm">
+
+            <!-- Step 1: Task Selection -->
+            <div class="section" id="sectionStep1">
+                <div class="step-badge">Step 1</div>
+                <h2 class="section-title">Which reporting task will you try first?</h2>
+                <p class="section-prompt">Select one of the quick wins covered in the course.</p>
+                <div class="options-list" id="taskOptions">
+                    <label class="option-label">
+                        <input type="radio" name="task" value="Using AI to draft first versions of management commentary from existing financial data.">
+                        Using AI to draft first versions of management commentary from existing financial data.
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="task" value="Asking AI to check a dataset for obvious quality issues before you begin analysis.">
+                        Asking AI to check a dataset for obvious quality issues before you begin analysis.
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="task" value="Using AI to translate a financial report into a summary for a non-financial audience.">
+                        Using AI to translate a financial report into a summary for a non-financial audience.
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="task" value="Generating simple visualisations from existing data to support a presentation.">
+                        Generating simple visualisations from existing data to support a presentation.
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 2: Date -->
+            <div class="section" id="sectionStep2">
+                <div class="step-badge">Step 2</div>
+                <h2 class="section-title">Select a date</h2>
+                <p class="section-prompt">I will implement this reporting task on (specific date):</p>
+                <input type="date" class="date-input" id="implementDate">
+            </div>
+
+            <!-- Step 3: Prompt Template -->
+            <div class="section" id="sectionStep3">
+                <div class="step-badge">Step 3</div>
+                <h2 class="section-title">Draft your prompt template</h2>
+                <p class="section-prompt">Use the four-element structure below. Leave placeholders in square brackets for details that will change each period.</p>
+                <div class="prompt-grid">
+                    <div class="prompt-field">
+                        <label>Context</label>
+                        <p class="sub-prompt">What data and reference files will you provide?</p>
+                        <textarea class="reflection-input" id="promptContext" placeholder="e.g. I will attach [monthly P&L spreadsheet] and [prior period commentary as a style reference]..."></textarea>
+                    </div>
+                    <div class="prompt-field">
+                        <label>Task</label>
+                        <p class="sub-prompt">What do you want the AI to do?</p>
+                        <textarea class="reflection-input" id="promptTask" placeholder="e.g. Draft a management commentary for [month] highlighting key variances to budget..."></textarea>
+                    </div>
+                    <div class="prompt-field">
+                        <label>Format</label>
+                        <p class="sub-prompt">How should the output be structured?</p>
+                        <textarea class="reflection-input" id="promptFormat" placeholder="e.g. Use [number] short paragraphs with headings. Use plain language suitable for a board report..."></textarea>
+                    </div>
+                    <div class="prompt-field">
+                        <label>Constraints</label>
+                        <p class="sub-prompt">What rules or limits should the AI follow?</p>
+                        <textarea class="reflection-input" id="promptConstraints" placeholder="e.g. Do not invent figures. Only reference data I have provided. Avoid jargon..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Context Documents -->
+            <div class="section" id="sectionStep4">
+                <div class="step-badge">Step 4</div>
+                <h2 class="section-title">Identify your context documents</h2>
+                <p class="section-prompt">What existing documents do you already have that you could attach as context files? Select any that apply to your chosen task.</p>
+                <div class="options-list" id="contextDocOptions">
+                    <label class="option-label">
+                        <input type="checkbox" name="contextDocs" value="Chart of accounts or coding structure">
+                        Chart of accounts or coding structure
+                    </label>
+                    <label class="option-label">
+                        <input type="checkbox" name="contextDocs" value="Previous period report (to use as a style reference)">
+                        Previous period report (to use as a style reference)
+                    </label>
+                    <label class="option-label">
+                        <input type="checkbox" name="contextDocs" value="Data dictionary or field definitions">
+                        Data dictionary or field definitions
+                    </label>
+                    <label class="option-label">
+                        <input type="checkbox" name="contextDocs" value="Reporting template showing expected output structure">
+                        Reporting template showing expected output structure
+                    </label>
+                    <label class="option-label">
+                        <input type="checkbox" name="contextDocs" value="Organisation-specific terminology list">
+                        Organisation-specific terminology list
+                    </label>
+                    <label class="option-label" id="otherDocLabel">
+                        <input type="checkbox" name="contextDocs" value="other" id="otherCheckbox">
+                        Other
+                    </label>
+                </div>
+                <input type="text" class="other-text-input" id="otherDocText" placeholder="Please describe your other document...">
+            </div>
+
+            <button type="submit" class="download-btn" id="downloadBtn">Download Plan (PDF)</button>
+        </form>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <svg viewBox="0 0 52 52">
+                    <polyline points="14 27 22 35 38 19"/>
+                </svg>
+            </div>
+            <h3 class="success-title">Download Successful!</h3>
+            <p class="success-message">
+                Your quick win plan has been saved as a PDF. Revisit it within two weeks — and once you've completed the task, save your prompt as the first entry in your prompt template library.
+            </p>
+            <button class="success-btn" onclick="closeSuccessModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const progressFill = document.getElementById('progressFill');
+
+        // ── Highlight selected radio/checkbox labels ──────────────────────
+        document.querySelectorAll('.option-label input').forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.type === 'radio') {
+                    document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                        r.closest('.option-label').classList.remove('selected');
+                    });
+                }
+                this.closest('.option-label').classList.toggle('selected', this.checked);
+                updateProgress();
+            });
+        });
+
+        // ── Show/hide "Other" text field ──────────────────────────────────
+        document.getElementById('otherCheckbox').addEventListener('change', function () {
+            const otherInput = document.getElementById('otherDocText');
+            if (this.checked) {
+                otherInput.classList.add('visible');
+            } else {
+                otherInput.classList.remove('visible');
+                otherInput.value = '';
+            }
+            updateProgress();
+        });
+
+        // ── Progress bar ──────────────────────────────────────────────────
+        // 4 steps; each step counts as 1 unit
+        function updateProgress() {
+            let filled = 0;
+
+            // Step 1: a task is selected
+            if (document.querySelector('input[name="task"]:checked')) filled++;
+
+            // Step 2: a date is entered
+            if (document.getElementById('implementDate').value) filled++;
+
+            // Step 3: at least one prompt field filled
+            const promptFields = ['promptContext','promptTask','promptFormat','promptConstraints'];
+            if (promptFields.some(id => document.getElementById(id).value.trim())) filled++;
+
+            // Step 4: at least one context doc checked
+            if (document.querySelectorAll('input[name="contextDocs"]:checked').length > 0) filled++;
+
+            progressFill.style.width = ((filled / 4) * 100) + '%';
+        }
+
+        document.getElementById('implementDate').addEventListener('change', updateProgress);
+        document.querySelectorAll('.reflection-input').forEach(ta => {
+            ta.addEventListener('input', updateProgress);
+        });
+
+        // ── Form submission → PDF ─────────────────────────────────────────
+        document.getElementById('planForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const task = document.querySelector('input[name="task"]:checked')?.value || '';
+            const date = document.getElementById('implementDate').value;
+            const context = document.getElementById('promptContext').value.trim();
+            const taskText = document.getElementById('promptTask').value.trim();
+            const format = document.getElementById('promptFormat').value.trim();
+            const constraints = document.getElementById('promptConstraints').value.trim();
+
+            const checkedDocs = Array.from(document.querySelectorAll('input[name="contextDocs"]:checked'))
+                .map(cb => {
+                    if (cb.value === 'other') {
+                        const other = document.getElementById('otherDocText').value.trim();
+                        return other ? `Other: ${other}` : 'Other';
+                    }
+                    return cb.value;
+                });
+
+            const hasContent = task || date || context || taskText || format || constraints || checkedDocs.length > 0;
+            if (!hasContent) {
+                alert('Please complete at least one section before downloading your plan.');
+                return;
+            }
+
+            downloadPlan({ task, date, context, taskText, format, constraints, checkedDocs });
+        });
+
+        function downloadPlan(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            let y = 20;
+            const lm = 20;
+            const maxW = doc.internal.pageSize.getWidth() - 40;
+
+            function checkPage(needed = 15) {
+                if (y + needed > 270) { doc.addPage(); y = 20; }
+            }
+
+            function addSectionHeader(stepLabel, title) {
+                checkPage(20);
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(255, 255, 255);
+                doc.setFillColor(56, 65, 109);
+                doc.roundedRect(lm, y - 5, 35, 8, 2, 2, 'F');
+                doc.text(stepLabel, lm + 4, y + 1);
+                doc.setTextColor(0);
+                doc.setFontSize(13);
+                doc.setFont(undefined, 'bold');
+                doc.text(title, lm + 40, y + 1);
+                y += 12;
+            }
+
+            function addField(label, value, italic = false) {
+                checkPage(12);
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(56, 65, 109);
+                doc.text(label, lm, y);
+                y += 6;
+                if (value) {
+                    doc.setFont(undefined, italic ? 'italic' : 'normal');
+                    doc.setTextColor(0);
+                    doc.setFontSize(10);
+                    const lines = doc.splitTextToSize(value, maxW);
+                    lines.forEach(line => {
+                        checkPage(7);
+                        doc.text(line, lm, y);
+                        y += 6;
+                    });
+                } else {
+                    doc.setFont(undefined, 'italic');
+                    doc.setTextColor(160);
+                    doc.text('[Not completed]', lm, y);
+                    doc.setTextColor(0);
+                    y += 6;
+                }
+                y += 4;
+            }
+
+            // Title
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(56, 65, 109);
+            doc.text('MY QUICK WIN PLAN', lm, y);
+            y += 8;
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(100);
+            const today = new Date().toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
+            doc.text(`Created: ${today}`, lm, y);
+            doc.setTextColor(0);
+            y += 14;
+
+            // Step 1
+            addSectionHeader('STEP 1', 'Reporting task');
+            addField('Selected task:', data.task);
+
+            // Step 2
+            addSectionHeader('STEP 2', 'Implementation date');
+            const formattedDate = data.date
+                ? new Date(data.date + 'T00:00:00').toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' })
+                : '';
+            addField('I will implement this task on:', formattedDate);
+
+            // Step 3
+            addSectionHeader('STEP 3', 'Prompt template');
+            addField('Context — what data and reference files will you provide?', data.context);
+            addField('Task — what do you want the AI to do?', data.taskText);
+            addField('Format — how should the output be structured?', data.format);
+            addField('Constraints — what rules or limits should the AI follow?', data.constraints);
+
+            // Step 4
+            addSectionHeader('STEP 4', 'Context documents');
+            const docsValue = data.checkedDocs.length > 0
+                ? data.checkedDocs.map(d => `• ${d}`).join('\n')
+                : '';
+            addField('Documents I will attach:', docsValue);
+
+            // Reminder footer
+            checkPage(20);
+            y += 4;
+            doc.setDrawColor(93, 200, 185);
+            doc.setLineWidth(0.5);
+            doc.line(lm, y, lm + maxW, y);
+            y += 8;
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'italic');
+            doc.setTextColor(80);
+            const reminder = 'Revisit this plan within two weeks. Once you have completed your first task, save the prompt as the first entry in your prompt template library.';
+            const rLines = doc.splitTextToSize(reminder, maxW);
+            rLines.forEach(line => { doc.text(line, lm, y); y += 5; });
+
+            doc.save(`quick-win-plan-${new Date().toISOString().split('T')[0]}.pdf`);
+            showSuccessModal();
+        }
+
+        function showSuccessModal() {
+            document.getElementById('successModal').classList.add('active');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) closeSuccessModal();
+        });
+    </script>
+</body>
+</html>
