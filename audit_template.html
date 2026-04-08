@@ -26,6 +26,7 @@ body {
     font-family: "IBM Plex Sans", sans-serif;
     margin: 0;
     padding: 20px;
+    background: #f5f6fa;
 }
 
 .page-header {
@@ -58,6 +59,7 @@ body {
     margin-bottom: 20px;
     background: white;
     border: 1px solid var(--lightBlue);
+    border-radius: 8px;
     padding: 14px 18px;
 }
 
@@ -95,6 +97,7 @@ body {
 
 .table-wrapper {
     overflow-x: auto;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(18,25,92,0.08);
 }
 
@@ -306,16 +309,14 @@ button.danger {
 
 <div class="controls">
     <button class="add-row-btn" id="add-row">＋ Add Row</button>
-    <button id="export-png">⬇ Export PNG</button>
-    <button id="export-pdf">⬇ Export PDF</button>
+    <button id="export-excel">⬇ Export to Excel</button>
     <button class="secondary" id="clear-all">Clear All</button>
 </div>
 
 <p class="footer-note">Tip: Tab through cells to fill quickly. Your data stays in this browser tab — export to save a copy.</p>
 
-<!-- Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- SheetJS for Excel export -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script>
 const columns = [
@@ -423,99 +424,58 @@ document.getElementById('clear-all').addEventListener('click', () => {
     }
 });
 
-// --- Capture: hide delete buttons, capture, restore ---
-async function captureTable() {
-    const delBtns = document.querySelectorAll('.row-delete');
-    delBtns.forEach(b => b.style.visibility = 'hidden');
+// --- Excel Export using SheetJS ---
+document.getElementById('export-excel').addEventListener('click', () => {
+    const wb = XLSX.utils.book_new();
 
-    // Flatten all textareas to their content height before capture
-    document.querySelectorAll('.txta').forEach(ta => {
-        ta.style.height = ta.scrollHeight + 'px';
+    // --- Sheet 1: Meta info ---
+    const org     = document.getElementById('meta-org').value || '';
+    const preparer= document.getElementById('meta-preparer').value || '';
+    const date    = document.getElementById('meta-date').value || '';
+    const version = document.getElementById('meta-version').value || '';
+
+    // --- Sheet 1: Audit Trail data ---
+    const headers = ['#', ...columns.map(c => c.label)];
+    const dataRows = [];
+
+    const tableRows = tbody.querySelectorAll('tr');
+    tableRows.forEach((tr, i) => {
+        const tas = tr.querySelectorAll('.txta');
+        const rowData = [i + 1, ...Array.from(tas).map(ta => ta.value)];
+        dataRows.push(rowData);
     });
 
-    const wrapper = document.querySelector('.table-wrapper');
-    const origOverflow = wrapper.style.overflow;
-    wrapper.style.overflow = 'visible';
+    // Build worksheet data: meta block at top, then table
+    const wsData = [
+        ['AI Use Audit Trail'],
+        [],
+        ['Organisation / Team', org, '', 'Prepared By', preparer],
+        ['Date Prepared', date, '', 'Version', version],
+        [],
+        headers,
+        ...dataRows
+    ];
 
-    // Also capture meta row
-    const metaEl = document.getElementById('meta-row');
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    // Create a capture container
-    const container = document.createElement('div');
-    container.style.cssText = 'background:white;padding:18px;font-family:"IBM Plex Sans",sans-serif;';
+    // Column widths (approximate chars)
+    ws['!cols'] = [
+        { wch: 4  },  // #
+        { wch: 12 },  // Period
+        { wch: 22 },  // Report/Process
+        { wch: 22 },  // AI Use Case
+        { wch: 18 },  // Tool/Model
+        { wch: 20 },  // Prompt Template ID
+        { wch: 20 },  // Input Data Version
+        { wch: 16 },  // Output ID
+        { wch: 16 },  // Reviewer
+        { wch: 22 },  // Checks Completed
+        { wch: 28 },  // Final Artefact Link
+        { wch: 30 },  // Notes/Exceptions
+    ];
 
-    // Title
-    const titleEl = document.createElement('h2');
-    titleEl.textContent = 'AI Use Audit Trail';
-    titleEl.style.cssText = 'margin:0 0 12px;color:#12195C;font-size:1.3rem;';
-    container.appendChild(titleEl);
-
-    // Meta snapshot
-    const metaClone = metaEl.cloneNode(true);
-    metaClone.querySelectorAll('input').forEach((inp, i) => {
-        const orig = metaEl.querySelectorAll('input')[i];
-        inp.value = orig.value;
-    });
-    metaClone.style.marginBottom = '14px';
-    container.appendChild(metaClone);
-
-    // Table snapshot
-    const tableClone = document.getElementById('audit-table').cloneNode(true);
-    // Copy textarea values
-    const origTas = document.querySelectorAll('#audit-table .txta');
-    const cloneTas = tableClone.querySelectorAll('.txta');
-    origTas.forEach((ta, i) => {
-        cloneTas[i].value = ta.value;
-        cloneTas[i].style.height = ta.scrollHeight + 'px';
-    });
-    // Remove delete column from clone
-    tableClone.querySelectorAll('tr').forEach(r => {
-        const last = r.lastElementChild;
-        if (last) last.remove();
-    });
-    container.appendChild(tableClone);
-
-    document.body.appendChild(container);
-    const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
-    document.body.removeChild(container);
-
-    wrapper.style.overflow = origOverflow;
-    delBtns.forEach(b => b.style.visibility = '');
-    return canvas;
-}
-
-document.getElementById('export-png').addEventListener('click', async () => {
-    const canvas = await captureTable();
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
-    link.download = 'AI-Audit-Trail.png';
-    link.click();
-});
-
-document.getElementById('export-pdf').addEventListener('click', async () => {
-    const { jsPDF } = window.jspdf;
-    const canvas = await captureTable();
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('l', 'mm', 'a4'); // landscape for wide table
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgH = (imgProps.height * pdfWidth) / imgProps.width;
-
-    if (imgH <= pdfHeight) {
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
-    } else {
-        let pos = 0, rem = imgH;
-        pdf.addImage(imgData, 'PNG', 0, pos, pdfWidth, imgH);
-        rem -= pdfHeight;
-        while (rem > 0) {
-            pos -= pdfHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, pos, pdfWidth, imgH);
-            rem -= pdfHeight;
-        }
-    }
-    pdf.save('AI-Audit-Trail.pdf');
+    XLSX.utils.book_append_sheet(wb, ws, 'Audit Trail');
+    XLSX.writeFile(wb, 'AI-Audit-Trail.xlsx');
 });
 
 // Set today's date by default
