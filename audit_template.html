@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Use Audit Trail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --AIMblue: #4353A3;
+    --darkBlue: #38416D;
+    --teal: #5DC8B9;
+    --cream: #F1EEDE;
+    --grey: #e7e9ec;
+    --rust: #AF4510;
+    --navy: #12195C;
+    --white: #ffffff;
+    --lightBlue: #AEBAE4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: "IBM Plex Sans", sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.page-header .subtitle {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 2px 0 0 0;
+}
+
+.meta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid var(--lightBlue);
+    padding: 14px 18px;
+}
+
+.meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 140px;
+}
+
+.meta-field label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--darkBlue);
+}
+
+.meta-field input {
+    border: none;
+    border-bottom: 1.5px solid var(--lightBlue);
+    padding: 4px 0;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.9rem;
+    color: var(--navy);
+    background: transparent;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.meta-field input:focus {
+    border-bottom-color: var(--AIMblue);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(18,25,92,0.08);
+}
+
+table {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    text-align: left;
+    background: white;
+    min-width: 900px;
+}
+
+table tr {
+    border: 1px solid var(--lightBlue);
+}
+
+table th, table td {
+    border: 1px solid var(--lightBlue);
+    padding: 9px 10px;
+    vertical-align: top;
+}
+
+table th {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background-color: var(--darkBlue);
+    color: var(--white);
+    white-space: nowrap;
+}
+
+tr:nth-child(even) { background-color: var(--grey); }
+tr:nth-child(odd)  { background-color: white; }
+
+td:first-child {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--navy);
+}
+
+.txta {
+    width: 100%;
+    min-height: 42px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.85rem;
+    overflow: hidden;
+    line-height: 1.4;
+    border: none;
+    background: transparent;
+    resize: none;
+    padding: 0;
+    color: #222;
+}
+
+.txta:focus {
+    outline: 1px dashed var(--AIMblue);
+    border-radius: 2px;
+}
+
+.row-num {
+    text-align: center;
+    color: var(--darkBlue);
+    font-weight: 700;
+    font-size: 0.8rem;
+    min-width: 28px;
+    width: 28px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 8px;
+    align-items: center;
+}
+
+button {
+    font-family: "IBM Plex Sans", sans-serif;
+    background-color: var(--navy);
+    color: white;
+    border: solid 2px var(--cream);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.18s;
+}
+
+button:hover { background-color: var(--AIMblue); }
+
+button.secondary {
+    background-color: white;
+    color: var(--navy);
+    border: 2px solid var(--lightBlue);
+}
+
+button.secondary:hover {
+    background-color: var(--grey);
+}
+
+button.danger {
+    background-color: var(--rust);
+    border-color: #d4510f;
+}
+
+.add-row-btn {
+    background-color: var(--teal);
+    color: var(--navy);
+    border-color: #4ab5a6;
+    font-weight: 600;
+}
+
+.add-row-btn:hover { background-color: #3eab9c; }
+
+.row-delete {
+    background: none;
+    border: none;
+    color: var(--rust);
+    cursor: pointer;
+    padding: 2px 6px;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+}
+
+.row-delete:hover { opacity: 1; background: #fbe8e0; }
+
+.footer-note {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 10px;
+}
+
+/* --- Print / export clean styles --- */
+@media print {
+    body { background: white; padding: 0; }
+    .controls, .meta-field input { border: none; }
+    button { display: none; }
+    .row-delete { display: none; }
+    .txta { overflow: visible; }
+    table { min-width: unset; }
+    .table-wrapper { box-shadow: none; overflow: visible; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+    <div>
+        <h1>AI Use Audit Trail</h1>
+        <p class="subtitle">Document your AI tool usage for review and accountability</p>
+    </div>
+</div>
+
+<!-- Meta / header fields -->
+<div class="meta-row" id="meta-row">
+    <div class="meta-field">
+        <label>Organisation / Team</label>
+        <input type="text" placeholder="e.g. Finance Division" id="meta-org">
+    </div>
+    <div class="meta-field">
+        <label>Prepared By</label>
+        <input type="text" placeholder="Name" id="meta-preparer">
+    </div>
+    <div class="meta-field">
+        <label>Date Prepared</label>
+        <input type="date" id="meta-date">
+    </div>
+    <div class="meta-field">
+        <label>Version</label>
+        <input type="text" placeholder="e.g. v1.0" id="meta-version">
+    </div>
+</div>
+
+<!-- Table -->
+<div class="table-wrapper">
+<table id="audit-table">
+    <thead>
+        <tr>
+            <th class="row-num">#</th>
+            <th>Period</th>
+            <th>Report / Process</th>
+            <th>AI Use Case</th>
+            <th>Tool / Model</th>
+            <th>Prompt Template ID</th>
+            <th>Input Data Version</th>
+            <th>Output ID</th>
+            <th>Reviewer</th>
+            <th>Checks Completed</th>
+            <th>Final Artefact Link</th>
+            <th>Notes / Exceptions</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+        <!-- Rows injected by JS -->
+    </tbody>
+</table>
+</div>
+
+<div class="controls">
+    <button class="add-row-btn" id="add-row">＋ Add Row</button>
+    <button id="export-png">⬇ Export PNG</button>
+    <button id="export-pdf">⬇ Export PDF</button>
+    <button class="secondary" id="clear-all">Clear All</button>
+</div>
+
+<p class="footer-note">Tip: Tab through cells to fill quickly. Your data stays in this browser tab — export to save a copy.</p>
+
+<!-- Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+const columns = [
+    { key: 'period',        label: 'Period',               placeholder: 'e.g. Q2 2025',              width: '80px'  },
+    { key: 'report',        label: 'Report / Process',     placeholder: 'e.g. Monthly Risk Report',  width: '130px' },
+    { key: 'usecase',       label: 'AI Use Case',          placeholder: 'e.g. Summarisation',        width: '120px' },
+    { key: 'tool',          label: 'Tool / Model',         placeholder: 'e.g. Claude 3.5',           width: '110px' },
+    { key: 'promptId',      label: 'Prompt Template ID',   placeholder: 'e.g. PT-042',               width: '100px' },
+    { key: 'inputVersion',  label: 'Input Data Version',   placeholder: 'e.g. v2024-06-01',          width: '100px' },
+    { key: 'outputId',      label: 'Output ID',            placeholder: 'e.g. OUT-0091',             width: '90px'  },
+    { key: 'reviewer',      label: 'Reviewer',             placeholder: 'Name / initials',           width: '90px'  },
+    { key: 'checks',        label: 'Checks Completed',     placeholder: 'e.g. Accuracy, Bias',       width: '120px' },
+    { key: 'artefact',      label: 'Final Artefact Link',  placeholder: 'URL or file path',          width: '130px' },
+    { key: 'notes',         label: 'Notes / Exceptions',   placeholder: 'Any exceptions or notes',   width: '150px' },
+];
+
+let rowCount = 0;
+const tbody = document.getElementById('table-body');
+
+function makeRow(num) {
+    rowCount++;
+    const tr = document.createElement('tr');
+    tr.dataset.row = rowCount;
+
+    // Row number cell
+    const numTd = document.createElement('td');
+    numTd.className = 'row-num';
+    numTd.textContent = num;
+    tr.appendChild(numTd);
+
+    // Data cells
+    columns.forEach(col => {
+        const td = document.createElement('td');
+        td.setAttribute('data-label', col.label);
+        const ta = document.createElement('textarea');
+        ta.className = 'txta';
+        ta.placeholder = col.placeholder;
+        ta.rows = 1;
+        td.appendChild(ta);
+        tr.appendChild(td);
+    });
+
+    // Delete button cell
+    const delTd = document.createElement('td');
+    delTd.style.textAlign = 'center';
+    const delBtn = document.createElement('button');
+    delBtn.className = 'row-delete';
+    delBtn.title = 'Delete row';
+    delBtn.innerHTML = '✕';
+    delBtn.addEventListener('click', () => {
+        tr.remove();
+        renumberRows();
+    });
+    delTd.appendChild(delBtn);
+    tr.appendChild(delTd);
+
+    return tr;
+}
+
+function renumberRows() {
+    const rows = tbody.querySelectorAll('tr');
+    rows.forEach((r, i) => {
+        r.querySelector('.row-num').textContent = i + 1;
+    });
+}
+
+function addRow() {
+    const currentRows = tbody.querySelectorAll('tr').length;
+    const row = makeRow(currentRows + 1);
+    tbody.appendChild(row);
+    autoResize(row);
+}
+
+// Auto-resize textareas
+function autoResize(scope) {
+    const tas = (scope || document).querySelectorAll('.txta');
+    tas.forEach(ta => {
+        ta.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    });
+}
+
+// Initial rows
+for (let i = 0; i < 5; i++) addRow();
+autoResize();
+
+document.getElementById('add-row').addEventListener('click', () => {
+    addRow();
+    // focus first textarea of new row
+    const rows = tbody.querySelectorAll('tr');
+    const lastRow = rows[rows.length - 1];
+    const firstTa = lastRow.querySelector('.txta');
+    if (firstTa) firstTa.focus();
+});
+
+document.getElementById('clear-all').addEventListener('click', () => {
+    if (confirm('Clear all rows and meta fields? This cannot be undone.')) {
+        tbody.innerHTML = '';
+        rowCount = 0;
+        for (let i = 0; i < 5; i++) addRow();
+        autoResize();
+        document.querySelectorAll('.meta-field input').forEach(i => i.value = '');
+    }
+});
+
+// --- Capture: hide delete buttons, capture, restore ---
+async function captureTable() {
+    const delBtns = document.querySelectorAll('.row-delete');
+    delBtns.forEach(b => b.style.visibility = 'hidden');
+
+    // Flatten all textareas to their content height before capture
+    document.querySelectorAll('.txta').forEach(ta => {
+        ta.style.height = ta.scrollHeight + 'px';
+    });
+
+    const wrapper = document.querySelector('.table-wrapper');
+    const origOverflow = wrapper.style.overflow;
+    wrapper.style.overflow = 'visible';
+
+    // Also capture meta row
+    const metaEl = document.getElementById('meta-row');
+
+    // Create a capture container
+    const container = document.createElement('div');
+    container.style.cssText = 'background:white;padding:18px;font-family:"IBM Plex Sans",sans-serif;';
+
+    // Title
+    const titleEl = document.createElement('h2');
+    titleEl.textContent = 'AI Use Audit Trail';
+    titleEl.style.cssText = 'margin:0 0 12px;color:#12195C;font-size:1.3rem;';
+    container.appendChild(titleEl);
+
+    // Meta snapshot
+    const metaClone = metaEl.cloneNode(true);
+    metaClone.querySelectorAll('input').forEach((inp, i) => {
+        const orig = metaEl.querySelectorAll('input')[i];
+        inp.value = orig.value;
+    });
+    metaClone.style.marginBottom = '14px';
+    container.appendChild(metaClone);
+
+    // Table snapshot
+    const tableClone = document.getElementById('audit-table').cloneNode(true);
+    // Copy textarea values
+    const origTas = document.querySelectorAll('#audit-table .txta');
+    const cloneTas = tableClone.querySelectorAll('.txta');
+    origTas.forEach((ta, i) => {
+        cloneTas[i].value = ta.value;
+        cloneTas[i].style.height = ta.scrollHeight + 'px';
+    });
+    // Remove delete column from clone
+    tableClone.querySelectorAll('tr').forEach(r => {
+        const last = r.lastElementChild;
+        if (last) last.remove();
+    });
+    container.appendChild(tableClone);
+
+    document.body.appendChild(container);
+    const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+    document.body.removeChild(container);
+
+    wrapper.style.overflow = origOverflow;
+    delBtns.forEach(b => b.style.visibility = '');
+    return canvas;
+}
+
+document.getElementById('export-png').addEventListener('click', async () => {
+    const canvas = await captureTable();
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'AI-Audit-Trail.png';
+    link.click();
+});
+
+document.getElementById('export-pdf').addEventListener('click', async () => {
+    const { jsPDF } = window.jspdf;
+    const canvas = await captureTable();
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('l', 'mm', 'a4'); // landscape for wide table
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgH = (imgProps.height * pdfWidth) / imgProps.width;
+
+    if (imgH <= pdfHeight) {
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
+    } else {
+        let pos = 0, rem = imgH;
+        pdf.addImage(imgData, 'PNG', 0, pos, pdfWidth, imgH);
+        rem -= pdfHeight;
+        while (rem > 0) {
+            pos -= pdfHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, pos, pdfWidth, imgH);
+            rem -= pdfHeight;
+        }
+    }
+    pdf.save('AI-Audit-Trail.pdf');
+});
+
+// Set today's date by default
+document.getElementById('meta-date').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
