@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lakewood Industrial — CFO Dashboard (Interactive)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#eeede8;padding:16px;min-height:100vh}
+:root{
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f5f4f0;
+  --color-background-tertiary:#eeede8;
+  --color-background-success:#eaf3de;
+  --color-background-danger:#fcebeb;
+  --color-background-warning:#faeeda;
+  --color-background-info:#e6f1fb;
+  --color-text-primary:#2c2c2a;
+  --color-text-secondary:#5f5e5a;
+  --color-text-tertiary:#888780;
+  --color-text-success:#3b6d11;
+  --color-text-danger:#a32d2d;
+  --color-text-warning:#854f0b;
+  --color-text-info:#185fa5;
+  --color-border-tertiary:rgba(44,44,42,0.15);
+  --color-border-secondary:rgba(44,44,42,0.3);
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+  --font-sans:system-ui,-apple-system,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  body{background:#1a1a18}
+  :root{
+    --color-background-primary:#1e1e1c;
+    --color-background-secondary:#282826;
+    --color-background-tertiary:#222220;
+    --color-background-success:#173404;
+    --color-background-danger:#501313;
+    --color-background-warning:#412402;
+    --color-background-info:#042c53;
+    --color-text-primary:#e8e7e2;
+    --color-text-secondary:#b4b2a9;
+    --color-text-tertiary:#888780;
+    --color-text-success:#c0dd97;
+    --color-text-danger:#f09595;
+    --color-text-warning:#fac775;
+    --color-text-info:#b5d4f4;
+    --color-border-tertiary:rgba(232,231,226,0.15);
+    --color-border-secondary:rgba(232,231,226,0.3);
+  }
+}
+.db{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px;background:var(--color-background-tertiary);border-radius:var(--border-radius-lg)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.span2{grid-column:span 2}.span4{grid-column:span 4}
+.ct{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;grid-column:span 4}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.kpi-label{font-size:10px;color:var(--color-text-secondary);margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1.1}
+.kpi-sub{font-size:10px;margin-top:4px;display:flex;align-items:center;gap:4px}
+.pill{display:inline-flex;align-items:center;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:500}
+.p-up{background:var(--color-background-success);color:var(--color-text-success)}
+.p-dn{background:var(--color-background-danger);color:var(--color-text-danger)}
+.up{color:var(--color-text-success)}.dn{color:var(--color-text-danger)}.warn{color:var(--color-text-warning)}
+.fbar{grid-column:span 4;display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);flex-wrap:wrap}
+.fl{font-size:10px;color:var(--color-text-secondary);font-weight:500}
+.fdiv{width:1px;height:14px;background:var(--color-border-tertiary)}
+select{font-size:11px;padding:2px 6px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+.tbl th{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-align:right;padding:3px 4px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tbl th:first-child{text-align:left}
+.tbl td{text-align:right;padding:4px;color:var(--color-text-primary);border-bottom:0.5px solid var(--color-border-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl td:first-child{text-align:left;font-weight:500}
+.tbl tr:last-child td{border-bottom:none;font-weight:500}
+.tbl tbody tr{cursor:pointer;transition:background .12s}
+.tbl tbody tr:hover{background:var(--color-background-secondary)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary)}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.drill{font-size:10px;color:var(--color-text-tertiary);margin-top:6px}
+.dq-row{display:flex;align-items:flex-start;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);gap:8px}
+.dq-row:last-child{border-bottom:none}
+.dq-name{font-size:11px;color:var(--color-text-primary)}
+.dq-detail{font-size:10px;color:var(--color-text-secondary)}
+.badge{padding:1px 7px;border-radius:3px;font-size:10px;font-weight:500;white-space:nowrap}
+.b-ok{background:var(--color-background-success);color:var(--color-text-success)}
+.b-warn{background:var(--color-background-warning);color:var(--color-text-warning)}
+.spark-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.spark-lbl{font-size:11px;font-weight:500;color:var(--color-text-primary);min-width:68px}
+.spark-val{font-size:11px;color:var(--color-text-primary);min-width:38px;text-align:right}
+.spark-d{font-size:10px;min-width:44px;text-align:right}
+.sec{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 3px}
+.tip{position:absolute;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 9px;font-size:11px;color:var(--color-text-primary);pointer-events:none;z-index:99;white-space:nowrap;display:none;line-height:1.5}
+.tip-label{font-size:10px;color:var(--color-text-secondary);display:block;margin-bottom:2px}
+.chart-wrap{position:relative}
+svg.ch{width:100%;overflow:visible;cursor:crosshair}
+.tt{font-family:var(--font-sans);font-size:10px;fill:var(--color-text-secondary)}
+.tth{font-family:var(--font-sans);font-size:10px;font-weight:500;fill:var(--color-text-primary)}
+.ax{stroke:var(--color-border-tertiary);stroke-width:0.5}
+.gl{stroke:var(--color-border-tertiary);stroke-width:0.5;stroke-dasharray:3 3}
+.bar-hover{opacity:1;transition:opacity .1s}
+.bar-hover:hover{opacity:0.75;cursor:pointer}
+.page-header{font-size:13px;font-weight:500;color:var(--color-text-primary);padding:0 0 4px 2px}
+.page-sub{font-size:11px;color:var(--color-text-secondary);padding:0 0 12px 2px}
+</style>
+</head>
+<body>
+
+<p class="page-header">Lakewood Industrial — CFO Monthly Dashboard</p>
+<p class="page-sub">Monthly close review &middot; BU profitability &middot; Cash flow planning &middot; Board pack preparation &middot; All values USD $k</p>
+
+<div class="db" id="dashboard">
+
+<div class="fbar">
+  <span class="fl">Period</span>
+  <select id="sel-period" onchange="render()">
+    <option value="mar">Mar 2025 MTD</option>
+    <option value="ytd">YTD 2025</option>
+    <option value="q1">Q1 2025</option>
+  </select>
+  <div class="fdiv"></div>
+  <span class="fl">Business unit</span>
+  <select id="sel-bu" onchange="render()">
+    <option value="all">All BUs</option>
+    <option value="aero">Aerospace</option>
+    <option value="auto">Auto</option>
+    <option value="ind">Industrial</option>
+  </select>
+  <div class="fdiv"></div>
+  <span class="fl">Region</span>
+  <select id="sel-region" onchange="render()">
+    <option value="all">All regions</option>
+    <option value="na">NA</option>
+    <option value="emea">EMEA</option>
+    <option value="apac">APAC</option>
+  </select>
+  <div class="fdiv"></div>
+  <span class="fl">Grain</span>
+  <select id="sel-grain" onchange="render()">
+    <option value="mtd">Monthly</option>
+    <option value="ytd">YTD cumulative</option>
+  </select>
+  <span id="refresh-stamp" style="margin-left:auto;font-size:10px;color:var(--color-text-tertiary)"></span>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-label">Revenue (act vs bud)</div><div class="kpi-val" id="k-rev">—</div><div class="kpi-sub" id="k-rev-sub"></div></div>
+  <div class="kpi"><div class="kpi-label">Gross margin %</div><div class="kpi-val" id="k-gm">—</div><div class="kpi-sub" id="k-gm-sub"></div></div>
+  <div class="kpi"><div class="kpi-label">EBITDA (act vs bud)</div><div class="kpi-val" id="k-ebitda">—</div><div class="kpi-sub" id="k-ebitda-sub"></div></div>
+  <div class="kpi"><div class="kpi-label">Cash &amp; equivalents</div><div class="kpi-val" id="k-cash">—</div><div class="kpi-sub" id="k-cash-sub"></div></div>
+</div>
+
+<div class="card span2">
+  <div class="ct">Revenue &amp; GM — actual vs budget vs PY (USD $k)</div>
+  <div class="chart-wrap">
+    <div class="tip" id="tip-rev"></div>
+    <svg class="ch" id="svg-rev" viewBox="0 0 340 128"></svg>
+  </div>
+  <div class="legend">
+    <span class="li"><span class="ld" style="background:#1D9E75"></span>Actual</span>
+    <span class="li"><span class="ld" style="background:#B4B2A9"></span>Budget</span>
+    <span class="li"><span class="ld" style="background:#85B7EB"></span>Prior year</span>
+    <span class="li"><span class="ld" style="background:#BA7517;border-radius:0;height:2px;width:14px"></span>GM%</span>
+  </div>
+  <div class="drill">&#9658; Hover bars for detail &middot; filter by BU or Region above</div>
+</div>
+
+<div class="card span2">
+  <div class="ct">BU profitability — <span id="bu-title">Mar MTD</span> (USD $k)</div>
+  <div style="overflow-x:auto">
+    <table class="tbl" id="bu-table">
+      <thead><tr>
+        <th style="width:22%">BU</th><th style="width:13%">Rev</th><th style="width:13%">COGS</th>
+        <th style="width:12%">GM$</th><th style="width:11%">GM%</th><th style="width:13%">OPEX</th>
+        <th style="width:13%">EBITDA</th><th style="width:13%">vs Bud</th>
+      </tr></thead>
+      <tbody id="bu-tbody"></tbody>
+    </table>
+  </div>
+  <div class="drill">&#9658; Hover rows &middot; filter above to isolate a BU</div>
+</div>
+
+<div class="card span2">
+  <div class="ct">EBITDA bridge: budget to actual (USD $k)</div>
+  <div class="chart-wrap">
+    <div class="tip" id="tip-wf"></div>
+    <svg class="ch" id="svg-wf" viewBox="0 0 340 138"></svg>
+  </div>
+  <div class="legend">
+    <span class="li"><span class="ld" style="background:#185FA5"></span>Total</span>
+    <span class="li"><span class="ld" style="background:#1D9E75"></span>Favourable</span>
+    <span class="li"><span class="ld" style="background:#E24B4A"></span>Adverse</span>
+  </div>
+  <div class="drill">&#9658; Hover bars for detail &middot; updates with BU filter</div>
+</div>
+
+<div class="card span2">
+  <div class="ct">Cash balance &amp; Capex — rolling 5 months (USD $k)</div>
+  <div class="chart-wrap">
+    <div class="tip" id="tip-cash"></div>
+    <svg class="ch" id="svg-cash" viewBox="0 0 340 128"></svg>
+  </div>
+  <div class="legend">
+    <span class="li"><span class="ld" style="background:#185FA5"></span>Cash balance</span>
+    <span class="li"><span class="ld" style="background:#85B7EB"></span>Monthly Capex</span>
+    <span class="li"><span class="ld" style="background:#EF9F27;border-radius:0;height:2px;width:14px"></span>Capex limit</span>
+  </div>
+  <div class="drill">&#9658; Hover points &amp; bars for detail</div>
+</div>
+
+<div class="card">
+  <div class="ct">EBITDA margin % — 3-month BU trend</div>
+  <div id="sparks"></div>
+  <div class="drill" style="margin-top:8px">&#9658; Updates with BU filter</div>
+</div>
+
+<div class="card">
+  <div class="ct">Headcount &amp; OPEX intensity</div>
+  <table class="tbl">
+    <thead><tr><th style="width:36%">BU</th><th>HC</th><th>&#916; bud</th><th>OPEX/HC</th></tr></thead>
+    <tbody id="hc-tbody"></tbody>
+  </table>
+  <svg width="100%" viewBox="0 0 200 36" id="hc-bar" style="margin-top:10px;height:36px;display:block"></svg>
+  <div class="drill">&#9658; Hover rows for detail</div>
+</div>
+
+<div class="card span2">
+  <div class="ct">Data quality &amp; control checks</div>
+  <div class="dq-row"><div><div class="dq-name">GL trial balance = SAP control total</div><div class="dq-detail">Checked 06:00 UTC &middot; all accounts reconciled</div></div><span class="badge b-ok">&#10003; Pass</span></div>
+  <div class="dq-row"><div><div class="dq-name">Revenue &ge; COGS per BU</div><div class="dq-detail">No negative GM detected across all BUs</div></div><span class="badge b-ok">&#10003; Pass</span></div>
+  <div class="dq-row"><div><div class="dq-name">Budget file integrity</div><div class="dq-detail">SHA-256 hash unchanged &middot; 2,840 rows loaded</div></div><span class="badge b-ok">&#10003; Pass</span></div>
+  <div class="dq-row"><div><div class="dq-name">Treasury &#8596; GL cash reconciliation</div><div class="dq-detail">$12k gap &middot; Auto BU &middot; under investigation</div></div><span class="badge b-warn">&#9888; $12k gap</span></div>
+  <div class="dq-row"><div><div class="dq-name">Capex vs annual approved limit</div><div class="dq-detail">YTD $8,240 of $36,000 &middot; 22.9% consumed</div></div><span class="badge b-ok">&#10003; Within limit</span></div>
+  <div class="dq-row"><div><div class="dq-name">Headcount vs HR roster</div><div class="dq-detail">3 unmatched IDs &middot; EMEA Auto &middot; pending</div></div><span class="badge b-warn">&#9888; 3 unmatched</span></div>
+  <div style="margin-top:8px;font-size:10px;color:var(--color-text-tertiary)">SAP actuals 06:00 UTC daily &middot; Budget on upload &middot; Treasury T+1 &middot; Power BI publishes 07:00 UTC &middot; Alerts &rarr; #data-alerts</div>
+</div>
+
+</div>
+
+<script>
+const RAW = {
+  buData: {
+    all: {
+      mar: { rev:142380, cogs:92220, opex:27120, revBud:137950, ebitdaBud:19790, gmBud:0.355, cash:31220, cashPrev:29080, capex:1840 },
+      ytd: { rev:418500, cogs:271200, opex:80100, revBud:410000, ebitdaBud:58500, gmBud:0.352, cash:31220, cashPrev:24100, capex:8240 },
+      q1:  { rev:418500, cogs:271200, opex:80100, revBud:410000, ebitdaBud:58500, gmBud:0.352, cash:31220, cashPrev:24100, capex:8240 }
+    },
+    aero: {
+      mar: { rev:58240, cogs:36100, opex:9800, revBud:56100, ebitdaBud:11840, gmBud:0.375, cash:null, cashPrev:null, capex:620 },
+      ytd: { rev:172000, cogs:106000, opex:29000, revBud:166000, ebitdaBud:35000, gmBud:0.372, cash:null, cashPrev:null, capex:2900 },
+      q1:  { rev:172000, cogs:106000, opex:29000, revBud:166000, ebitdaBud:35000, gmBud:0.372, cash:null, cashPrev:null, capex:2900 }
+    },
+    auto: {
+      mar: { rev:51620, cogs:34580, opex:10100, revBud:51000, ebitdaBud:7550, gmBud:0.342, cash:null, cashPrev:null, capex:780 },
+      ytd: { rev:152000, cogs:101800, opex:29800, revBud:151000, ebitdaBud:22300, gmBud:0.338, cash:null, cashPrev:null, capex:3200 },
+      q1:  { rev:152000, cogs:101800, opex:29800, revBud:151000, ebitdaBud:22300, gmBud:0.338, cash:null, cashPrev:null, capex:3200 }
+    },
+    ind: {
+      mar: { rev:32520, cogs:21540, opex:7220, revBud:30850, ebitdaBud:3850, gmBud:0.354, cash:null, cashPrev:null, capex:440 },
+      ytd: { rev:94500, cogs:63400, opex:21300, revBud:93000, ebitdaBud:11200, gmBud:0.349, cash:null, cashPrev:null, capex:2140 },
+      q1:  { rev:94500, cogs:63400, opex:21300, revBud:93000, ebitdaBud:11200, gmBud:0.349, cash:null, cashPrev:null, capex:2140 }
+    }
+  },
+  buRows: {
+    all: {
+      mar: [
+        {name:'Aerospace',rev:58240,cogs:36100,opex:9800,gmp:38.0,ebitda:12340,vsBud:4.2,dir:1},
+        {name:'Auto',rev:51620,cogs:34580,opex:10100,gmp:33.0,ebitda:6940,vsBud:-8.1,dir:-1},
+        {name:'Industrial',rev:32520,cogs:21540,opex:7220,gmp:33.8,ebitda:3760,vsBud:-2.4,dir:-1},
+        {name:'Total',rev:142380,cogs:92220,opex:27120,gmp:34.1,ebitda:23040,vsBud:-5.8,dir:-1}
+      ],
+      ytd: [
+        {name:'Aerospace',rev:172000,cogs:106000,opex:29000,gmp:38.4,ebitda:37000,vsBud:5.7,dir:1},
+        {name:'Auto',rev:152000,cogs:101800,opex:29800,gmp:33.0,ebitda:20400,vsBud:-8.5,dir:-1},
+        {name:'Industrial',rev:94500,cogs:63400,opex:21300,gmp:32.9,ebitda:9800,vsBud:-1.8,dir:-1},
+        {name:'Total',rev:418500,cogs:271200,opex:80100,gmp:35.2,ebitda:67200,vsBud:-1.2,dir:-1}
+      ],
+      q1: [
+        {name:'Aerospace',rev:172000,cogs:106000,opex:29000,gmp:38.4,ebitda:37000,vsBud:5.7,dir:1},
+        {name:'Auto',rev:152000,cogs:101800,opex:29800,gmp:33.0,ebitda:20400,vsBud:-8.5,dir:-1},
+        {name:'Industrial',rev:94500,cogs:63400,opex:21300,gmp:32.9,ebitda:9800,vsBud:-1.8,dir:-1},
+        {name:'Total',rev:418500,cogs:271200,opex:80100,gmp:35.2,ebitda:67200,vsBud:-1.2,dir:-1}
+      ]
+    },
+    aero:{
+      mar:[{name:'Aerospace',rev:58240,cogs:36100,opex:9800,gmp:38.0,ebitda:12340,vsBud:4.2,dir:1},{name:'Total',rev:58240,cogs:36100,opex:9800,gmp:38.0,ebitda:12340,vsBud:4.2,dir:1}],
+      ytd:[{name:'Aerospace',rev:172000,cogs:106000,opex:29000,gmp:38.4,ebitda:37000,vsBud:5.7,dir:1},{name:'Total',rev:172000,cogs:106000,opex:29000,gmp:38.4,ebitda:37000,vsBud:5.7,dir:1}],
+      q1:[{name:'Aerospace',rev:172000,cogs:106000,opex:29000,gmp:38.4,ebitda:37000,vsBud:5.7,dir:1},{name:'Total',rev:172000,cogs:106000,opex:29000,gmp:38.4,ebitda:37000,vsBud:5.7,dir:1}]
+    },
+    auto:{
+      mar:[{name:'Auto',rev:51620,cogs:34580,opex:10100,gmp:33.0,ebitda:6940,vsBud:-8.1,dir:-1},{name:'Total',rev:51620,cogs:34580,opex:10100,gmp:33.0,ebitda:6940,vsBud:-8.1,dir:-1}],
+      ytd:[{name:'Auto',rev:152000,cogs:101800,opex:29800,gmp:33.0,ebitda:20400,vsBud:-8.5,dir:-1},{name:'Total',rev:152000,cogs:101800,opex:29800,gmp:33.0,ebitda:20400,vsBud:-8.5,dir:-1}],
+      q1:[{name:'Auto',rev:152000,cogs:101800,opex:29800,gmp:33.0,ebitda:20400,vsBud:-8.5,dir:-1},{name:'Total',rev:152000,cogs:101800,opex:29800,gmp:33.0,ebitda:20400,vsBud:-8.5,dir:-1}]
+    },
+    ind:{
+      mar:[{name:'Industrial',rev:32520,cogs:21540,opex:7220,gmp:33.8,ebitda:3760,vsBud:-2.4,dir:-1},{name:'Total',rev:32520,cogs:21540,opex:7220,gmp:33.8,ebitda:3760,vsBud:-2.4,dir:-1}],
+      ytd:[{name:'Industrial',rev:94500,cogs:63400,opex:21300,gmp:32.9,ebitda:9800,vsBud:-1.8,dir:-1},{name:'Total',rev:94500,cogs:63400,opex:21300,gmp:32.9,ebitda:9800,vsBud:-1.8,dir:-1}],
+      q1:[{name:'Industrial',rev:94500,cogs:63400,opex:21300,gmp:32.9,ebitda:9800,vsBud:-1.8,dir:-1},{name:'Total',rev:94500,cogs:63400,opex:21300,gmp:32.9,ebitda:9800,vsBud:-1.8,dir:-1}]
+    }
+  },
+  months:['Nov','Dec','Jan','Feb','Mar'],
+  cashSeries:{
+    all:[29080,29800,30200,30980,31220],
+    aero:[9200,9400,9500,9700,9800],
+    auto:[11200,11500,11700,11900,12050],
+    ind:[8680,8900,9000,9380,9370]
+  },
+  capexSeries:{
+    all:[1540,1720,1580,1560,1840],
+    aero:[520,580,530,550,620],
+    auto:[620,700,640,610,780],
+    ind:[400,440,410,400,440]
+  },
+  hcRows:{
+    all:[
+      {name:'Aerospace',hc:1240,hcDelta:-12,opexHc:7.9},
+      {name:'Auto',hc:1680,hcDelta:54,opexHc:6.0},
+      {name:'Industrial',hc:910,hcDelta:-8,opexHc:7.9},
+      {name:'Total',hc:3830,hcDelta:34,opexHc:7.1}
+    ],
+    aero:[{name:'Aerospace',hc:1240,hcDelta:-12,opexHc:7.9},{name:'Total',hc:1240,hcDelta:-12,opexHc:7.9}],
+    auto:[{name:'Auto',hc:1680,hcDelta:54,opexHc:6.0},{name:'Total',hc:1680,hcDelta:54,opexHc:6.0}],
+    ind:[{name:'Industrial',hc:910,hcDelta:-8,opexHc:7.9},{name:'Total',hc:910,hcDelta:-8,opexHc:7.9}]
+  },
+  sparkData:{
+    all:[
+      {bu:'Aerospace',vals:[20.4,20.8,21.2],delta:'+0.8pp',dir:1,color:'#1D9E75'},
+      {bu:'Auto',vals:[15.5,14.2,13.4],delta:'-2.1pp',dir:-1,color:'#E24B4A'},
+      {bu:'Industrial',vals:[11.9,11.7,11.6],delta:'-0.3pp',dir:-1,color:'#BA7517'}
+    ],
+    aero:[{bu:'Aerospace',vals:[20.4,20.8,21.2],delta:'+0.8pp',dir:1,color:'#1D9E75'}],
+    auto:[{bu:'Auto',vals:[15.5,14.2,13.4],delta:'-2.1pp',dir:-1,color:'#E24B4A'}],
+    ind:[{bu:'Industrial',vals:[11.9,11.7,11.6],delta:'-0.3pp',dir:-1,color:'#BA7517'}]
+  },
+  revSeries:{
+    all:{
+      mar:{act:[118400,128900,142380],bud:[115000,125000,137950],py:[108000,117000,131200],gm:[33.2,33.8,34.1]},
+      ytd:{act:[118400,247300,418500],bud:[115000,240000,410000],py:[108000,225000,380000],gm:[33.2,33.5,35.2]},
+      q1:{act:[118400,247300,418500],bud:[115000,240000,410000],py:[108000,225000,380000],gm:[33.2,33.5,35.2]}
+    },
+    aero:{
+      mar:{act:[48000,53200,58240],bud:[46500,51000,56100],py:[44000,49000,54000],gm:[37.2,37.6,38.0]},
+      ytd:{act:[48000,101200,172000],bud:[46500,97500,166000],py:[44000,93000,158000],gm:[37.2,37.9,38.4]},
+      q1:{act:[48000,101200,172000],bud:[46500,97500,166000],py:[44000,93000,158000],gm:[37.2,37.9,38.4]}
+    },
+    auto:{
+      mar:{act:[42500,47300,51620],bud:[42000,46500,51000],py:[39000,43500,47800],gm:[33.8,33.4,33.0]},
+      ytd:{act:[42500,89800,152000],bud:[42000,88500,151000],py:[39000,82500,140000],gm:[33.8,33.6,33.0]},
+      q1:{act:[42500,89800,152000],bud:[42000,88500,151000],py:[39000,82500,140000],gm:[33.8,33.6,33.0]}
+    },
+    ind:{
+      mar:{act:[27900,28400,32520],bud:[26500,27500,30850],py:[25000,26500,29400],gm:[33.0,33.4,33.8]},
+      ytd:{act:[27900,56300,94500],bud:[26500,54000,93000],py:[25000,52500,82000],gm:[33.0,33.2,32.9]},
+      q1:{act:[27900,56300,94500],bud:[26500,54000,93000],py:[25000,52500,82000],gm:[33.0,33.2,32.9]}
+    }
+  },
+  wfData:{
+    all:{mar:{bud:19790,vol:4420,price:-2180,cogs:-3850,opex:-1290,fx:760},ytd:{bud:58500,vol:13200,price:-6400,cogs:-11200,opex:-3800,fx:2100},q1:{bud:58500,vol:13200,price:-6400,cogs:-11200,opex:-3800,fx:2100}},
+    aero:{mar:{bud:11840,vol:1800,price:-200,cogs:-800,opex:-400,fx:100},ytd:{bud:35000,vol:5200,price:-600,cogs:-2300,opex:-1200,fx:300},q1:{bud:35000,vol:5200,price:-600,cogs:-2300,opex:-1200,fx:300}},
+    auto:{mar:{bud:7550,vol:1600,price:-1200,cogs:-1800,opex:-600,fx:390},ytd:{bud:22300,vol:4800,price:-3600,cogs:-5400,opex:-1800,fx:1100},q1:{bud:22300,vol:4800,price:-3600,cogs:-5400,opex:-1800,fx:1100}},
+    ind:{mar:{bud:3850,vol:900,price:-600,cogs:-1000,opex:-280,fx:270},ytd:{bud:11200,vol:2600,price:-1800,cogs:-2800,opex:-800,fx:600},q1:{bud:11200,vol:2600,price:-1800,cogs:-2800,opex:-800,fx:600}}
+  }
+};
+
+function fmt(n){return n==null?'—':'$'+Math.abs(n).toLocaleString();}
+function pct(n){return n==null?'—':n.toFixed(1)+'%';}
+
+function showTip(tipEl,svgEl,evt,html){
+  tipEl.innerHTML=html;tipEl.style.display='block';
+  const pr=svgEl.parentElement.getBoundingClientRect();
+  const x=evt.clientX-pr.left+8,y=evt.clientY-pr.top-10;
+  tipEl.style.left=Math.min(x,pr.width-tipEl.offsetWidth-4)+'px';
+  tipEl.style.top=Math.max(0,y)+'px';
+}
+function hideTip(tipEl){tipEl.style.display='none';}
+
+function makeSVGEl(tag,attrs){
+  const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const[k,v] of Object.entries(attrs)) el.setAttribute(k,v);
+  return el;
+}
+
+function renderRevChart(bu,period){
+  const svg=document.getElementById('svg-rev');
+  const tip=document.getElementById('tip-rev');
+  svg.innerHTML='';
+  const d=RAW.revSeries[bu][period];
+  const months=['Jan','Feb','Mar'];
+  const W=340,H=108,pad={l:42,r:8,t:10,b:20};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const allVals=[...d.act,...d.bud,...d.py];
+  const maxV=Math.max(...allVals)*1.08;
+  const ysc=v=>pad.t+ch*(1-v/maxV);
+  const ticks=[0,Math.round(maxV*0.5/1000)*1000,Math.round(maxV/1000)*1000];
+
+  svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:pad.t,x2:pad.l,y2:H-pad.b,class:'ax'}));
+  svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:H-pad.b,x2:W-pad.r,y2:H-pad.b,class:'ax'}));
+  ticks.forEach(t=>{
+    const y=ysc(t);
+    if(t>0) svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:y,x2:W-pad.r,y2:y,class:'gl'}));
+    const tx=makeSVGEl('text',{x:pad.l-3,y:y+3,'text-anchor':'end',class:'tt'});
+    tx.textContent='$'+(t>=1000?t/1000+'k':t); svg.appendChild(tx);
+  });
+
+  const groupW=cw/3,bw=14,gap=3;
+  const colors=['#1D9E75','#B4B2A9','#85B7EB'];
+  const series=[d.act,d.bud,d.py];
+  const seriesNames=['Actual','Budget','Prior year'];
+  months.forEach((m,mi)=>{
+    const gx=pad.l+mi*groupW+groupW/2;
+    series.forEach((s,si)=>{
+      const bx=gx+(si-1)*(bw+gap)-bw/2;
+      const by=ysc(s[mi]),bh=H-pad.b-by;
+      const rect=makeSVGEl('rect',{x:bx,y:by,width:bw,height:Math.max(bh,1),fill:colors[si],class:'bar-hover'});
+      rect.addEventListener('mousemove',e=>showTip(tip,svg,e,`<span class="tip-label">${m} — ${seriesNames[si]}</span><strong>$${s[mi].toLocaleString()}</strong>`));
+      rect.addEventListener('mouseleave',()=>hideTip(tip));
+      svg.appendChild(rect);
+    });
+    const tx=makeSVGEl('text',{x:gx,y:H-pad.b+12,'text-anchor':'middle',class:'tt'});
+    tx.textContent=m; svg.appendChild(tx);
+  });
+
+  const gmPts=months.map((m,mi)=>({gx:pad.l+mi*groupW+groupW/2,gy:ysc(d.gm[mi]/100*maxV),gm:d.gm[mi],m}));
+  svg.appendChild(makeSVGEl('polyline',{fill:'none',stroke:'#BA7517','stroke-width':'1.5','stroke-linecap':'round',points:gmPts.map(p=>`${p.gx},${p.gy}`).join(' ')}));
+  gmPts.forEach(p=>{
+    const c=makeSVGEl('circle',{cx:p.gx,cy:p.gy,r:'3',fill:'#BA7517',style:'cursor:pointer'});
+    c.addEventListener('mousemove',e=>showTip(tip,svg,e,`<span class="tip-label">${p.m} — GM%</span><strong>${p.gm.toFixed(1)}%</strong>`));
+    c.addEventListener('mouseleave',()=>hideTip(tip));
+    svg.appendChild(c);
+  });
+}
+
+function renderWaterfall(bu,period){
+  const svg=document.getElementById('svg-wf');
+  const tip=document.getElementById('tip-wf');
+  svg.innerHTML='';
+  const d=RAW.wfData[bu][period];
+  const act=d.bud+d.vol+d.price+d.cogs+d.opex+d.fx;
+  const bars=[
+    {label:'Budget',val:d.bud,type:'total',float:0},
+    {label:'Volume',val:d.vol,type:d.vol>=0?'pos':'neg',float:d.bud},
+    {label:'Price/Mix',val:d.price,type:d.price>=0?'pos':'neg',float:d.bud+d.vol},
+    {label:'COGS',val:d.cogs,type:d.cogs>=0?'pos':'neg',float:d.bud+d.vol+d.price},
+    {label:'OPEX',val:d.opex,type:d.opex>=0?'pos':'neg',float:d.bud+d.vol+d.price+d.cogs},
+    {label:'FX/Other',val:d.fx,type:d.fx>=0?'pos':'neg',float:d.bud+d.vol+d.price+d.cogs+d.opex},
+    {label:'Actual',val:act,type:'total',float:0}
+  ];
+  const W=340,H=118,pb=20,pt=16,pl=8;
+  const maxV=Math.max(...bars.map(b=>b.type==='total'?b.val:b.float+Math.max(0,b.val)))*1.12;
+  const bw=Math.floor((W-pl*2)/bars.length)-6;
+  const ch=H-pt-pb;
+  const ysc=v=>pt+ch*(1-v/maxV);
+  const colors={total:'#185FA5',pos:'#1D9E75',neg:'#E24B4A'};
+
+  bars.forEach((b,i)=>{
+    const x=pl+i*((W-pl*2)/bars.length)+3;
+    const by=b.val<0?ysc(b.float):ysc(b.type==='total'?b.val:b.float+b.val);
+    const bh=Math.abs(ysc(b.float)-ysc(b.type==='total'?0:b.val+b.float))||Math.abs(ysc(0)-ysc(b.val));
+    const realBy=b.type==='total'?ysc(b.val):Math.min(ysc(b.float),ysc(b.float+b.val));
+    const realBh=b.type==='total'?ch-(ysc(b.val)-pt):Math.abs(ysc(b.float)-ysc(b.float+b.val));
+    const rect=makeSVGEl('rect',{x,y:realBy,width:bw,height:Math.max(realBh,2),fill:colors[b.type],opacity:'0.88',class:'bar-hover'});
+    rect.addEventListener('mousemove',e=>showTip(tip,svg,e,`<span class="tip-label">${b.label}</span><strong>${b.val>=0?'+':''}$${Math.abs(b.val).toLocaleString()}</strong>`));
+    rect.addEventListener('mouseleave',()=>hideTip(tip));
+    svg.appendChild(rect);
+    const valTx=makeSVGEl('text',{x:x+bw/2,y:realBy-3,'text-anchor':'middle',class:'tt',fill:b.val<0?'#A32D2D':b.type==='total'?'#0C447C':'#3B6D11'});
+    valTx.textContent=(b.val>=0&&b.type!=='total'?'+':'')+Math.round(b.val/1000*10)/10+'k';
+    svg.appendChild(valTx);
+    const lTx=makeSVGEl('text',{x:x+bw/2,y:H-pb+12,'text-anchor':'middle',class:'tt'});
+    lTx.textContent=b.label; svg.appendChild(lTx);
+    if(i<bars.length-1){
+      const connY=b.type==='total'?ysc(b.val):ysc(b.float+b.val);
+      const nx2=pl+(i+1)*((W-pl*2)/bars.length)+3;
+      svg.appendChild(makeSVGEl('line',{x1:x+bw+2,y1:connY,x2:nx2,y2:connY,stroke:'var(--color-border-secondary)','stroke-width':'0.5','stroke-dasharray':'2 2'}));
+    }
+  });
+}
+
+function renderCashChart(bu){
+  const svg=document.getElementById('svg-cash');
+  const tip=document.getElementById('tip-cash');
+  svg.innerHTML='';
+  const cash=RAW.cashSeries[bu];
+  const capex=RAW.capexSeries[bu];
+  const months=RAW.months;
+  const W=340,H=108,pad={l:38,r:18,t:10,b:20};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const maxC=Math.max(...cash)*1.1;
+  const capexLimit=bu==='all'?3200:bu==='aero'?1100:bu==='auto'?1300:900;
+  const ysc=v=>pad.t+ch*(1-v/maxC);
+  const xs=months.map((_,i)=>pad.l+i*(cw/(months.length-1)));
+
+  svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:pad.t,x2:pad.l,y2:H-pad.b,class:'ax'}));
+  svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:H-pad.b,x2:W-pad.r,y2:H-pad.b,class:'ax'}));
+  [0,Math.round(maxC*0.5/1000)*1000,Math.round(maxC/1000)*1000].forEach(t=>{
+    const y=ysc(t);
+    if(t>0) svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:y,x2:W-pad.r,y2:y,class:'gl'}));
+    const tx=makeSVGEl('text',{x:pad.l-3,y:y+3,'text-anchor':'end',class:'tt'});
+    tx.textContent='$'+(t>=1000?t/1000+'k':t); svg.appendChild(tx);
+  });
+
+  const capexBarH=12,capexBarY=H-pad.b-capexBarH-2,barW=14;
+  capex.forEach((v,i)=>{
+    const rect=makeSVGEl('rect',{x:xs[i]-barW/2,y:capexBarY,width:barW,height:capexBarH,fill:'#85B7EB',opacity:'0.85',class:'bar-hover'});
+    rect.addEventListener('mousemove',e=>showTip(tip,svg,e,`<span class="tip-label">${months[i]} Capex</span><strong>$${v.toLocaleString()}</strong><br><span style="font-size:10px;color:var(--color-text-secondary)">Monthly limit: $${capexLimit.toLocaleString()}</span>`));
+    rect.addEventListener('mouseleave',()=>hideTip(tip));
+    svg.appendChild(rect);
+  });
+  svg.appendChild(makeSVGEl('line',{x1:pad.l,y1:capexBarY,x2:W-pad.r-2,y2:capexBarY,stroke:'#EF9F27','stroke-width':'1','stroke-dasharray':'4 3'}));
+  const limTx=makeSVGEl('text',{x:W-pad.r,y:capexBarY+3,class:'tt',fill:'#BA7517'});
+  limTx.textContent='lim'; svg.appendChild(limTx);
+
+  const pts=cash.map((v,i)=>({x:xs[i],y:ysc(v),v,m:months[i]}));
+  svg.appendChild(makeSVGEl('polyline',{fill:'none',stroke:'#185FA5','stroke-width':'2','stroke-linecap':'round',points:pts.map(p=>`${p.x},${p.y}`).join(' ')}));
+  pts.forEach(p=>{
+    const c=makeSVGEl('circle',{cx:p.x,cy:p.y,r:'3',fill:'#185FA5',style:'cursor:pointer'});
+    c.addEventListener('mousemove',e=>showTip(tip,svg,e,`<span class="tip-label">${p.m} cash balance</span><strong>$${p.v.toLocaleString()}</strong>`));
+    c.addEventListener('mouseleave',()=>hideTip(tip));
+    svg.appendChild(c);
+  });
+  months.forEach((m,i)=>{
+    const tx=makeSVGEl('text',{x:xs[i],y:H-pad.b+12,'text-anchor':'middle',class:'tt'});
+    tx.textContent=m; svg.appendChild(tx);
+  });
+}
+
+function renderBUTable(bu,period){
+  const rows=RAW.buRows[bu][period];
+  const tbody=document.getElementById('bu-tbody');
+  tbody.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    const gmpClass=r.gmp>=36?'up':r.gmp<34?'warn':'';
+    const vClass=r.dir>0?'up':'dn';
+    tr.innerHTML=`<td>${r.name}</td><td>${r.rev.toLocaleString()}</td><td>${r.cogs.toLocaleString()}</td><td>${(r.rev-r.cogs).toLocaleString()}</td><td class="${gmpClass}">${r.gmp.toFixed(1)}%</td><td>${r.opex.toLocaleString()}</td><td>${r.ebitda.toLocaleString()}</td><td class="${vClass}">${r.vsBud>0?'+':''}${r.vsBud.toFixed(1)}%</td>`;
+    tr.title=`Rev: $${r.rev.toLocaleString()} | GM: ${r.gmp.toFixed(1)}% | EBITDA: $${r.ebitda.toLocaleString()}`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('bu-title').textContent=({mar:'Mar MTD',ytd:'YTD 2025',q1:'Q1 2025'})[period];
+}
+
+function renderHC(bu){
+  const rows=RAW.hcRows[bu];
+  const tbody=document.getElementById('hc-tbody');
+  tbody.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.name}</td><td>${r.hc.toLocaleString()}</td><td class="${r.hcDelta<=0?'up':'dn'}">${r.hcDelta>0?'+':''}${r.hcDelta}</td><td>$${r.opexHc.toFixed(1)}k</td>`;
+    tr.title=`HC: ${r.hc.toLocaleString()} | vs budget: ${r.hcDelta>0?'+':''}${r.hcDelta} | OPEX/HC: $${r.opexHc.toFixed(1)}k`;
+    tbody.appendChild(tr);
+  });
+  const total=rows[rows.length-1];
+  const budHC=total.hc-total.hcDelta;
+  const svg=document.getElementById('hc-bar');
+  svg.innerHTML='';
+  const scale=140/Math.max(total.hc,budHC);
+  const rA=makeSVGEl('rect',{x:0,y:2,width:Math.round(total.hc*scale),height:14,rx:3,fill:'#1D9E75',opacity:'0.8'});
+  const rB=makeSVGEl('rect',{x:0,y:20,width:Math.round(budHC*scale),height:14,rx:3,fill:'#B4B2A9',opacity:'0.7'});
+  const tA=makeSVGEl('text',{x:Math.round(total.hc*scale)+4,y:13,class:'tt',fill:'#27500A'});
+  tA.textContent='Act '+total.hc.toLocaleString();
+  const tB=makeSVGEl('text',{x:Math.round(budHC*scale)+4,y:31,class:'tt',fill:'#5F5E5A'});
+  tB.textContent='Bud '+budHC.toLocaleString();
+  [rA,rB,tA,tB].forEach(el=>svg.appendChild(el));
+}
+
+function renderSparks(bu){
+  const data=RAW.sparkData[bu];
+  const container=document.getElementById('sparks');
+  container.innerHTML='';
+  data.forEach(s=>{
+    const sec=document.createElement('div');
+    sec.className='sec'; sec.textContent=s.bu;
+    container.appendChild(sec);
+    const row=document.createElement('div');
+    row.className='spark-row';
+    const min=Math.min(...s.vals),max=Math.max(...s.vals),range=max-min||1;
+    const W=80,H=20;
+    const pts=s.vals.map((v,i)=>`${Math.round(4+i*(W-8)/2)},${Math.round(H-4-(v-min)/range*(H-8))}`).join(' ');
+    row.innerHTML=`<span class="spark-lbl">Jan &rarr; Mar</span>
+      <svg viewBox="0 0 ${W} ${H}" style="flex:1;min-width:50px;height:20px">
+        <polyline fill="none" stroke="${s.color}" stroke-width="1.5" stroke-linecap="round" points="${pts}"/>
+        ${s.vals.map((v,i)=>`<circle cx="${Math.round(4+i*(W-8)/2)}" cy="${Math.round(H-4-(v-min)/range*(H-8))}" r="2" fill="${s.color}"/>`).join('')}
+      </svg>
+      <span class="spark-val">${s.vals[s.vals.length-1].toFixed(1)}%</span>
+      <span class="spark-d ${s.dir>0?'up':'dn'}">${s.dir>0?'▲':'▼'} ${s.delta}</span>`;
+    container.appendChild(row);
+  });
+}
+
+function renderKPIs(bu,period){
+  const d=RAW.buData[bu][period];
+  const gm=d.rev-d.cogs;
+  const gmPct=gm/d.rev*100;
+  const ebitda=gm-d.opex;
+  const revVar=(d.rev-d.revBud)/d.revBud*100;
+  const ebitdaVar=(ebitda-d.ebitdaBud)/d.ebitdaBud*100;
+  const gmPp=(gmPct/100-d.gmBud)*100;
+
+  document.getElementById('k-rev').textContent='$'+d.rev.toLocaleString();
+  document.getElementById('k-rev-sub').innerHTML=`<span class="pill ${revVar>=0?'p-up':'p-dn'}">${revVar>=0?'▲':'▼'} ${Math.abs(revVar).toFixed(1)}%</span><span style="color:var(--color-text-secondary)">bud $${d.revBud.toLocaleString()}</span>`;
+  document.getElementById('k-gm').textContent=gmPct.toFixed(1)+'%';
+  document.getElementById('k-gm-sub').innerHTML=`<span class="pill ${gmPp>=0?'p-up':'p-dn'}">${gmPp>=0?'▲':'▼'} ${Math.abs(gmPp).toFixed(1)}pp</span><span style="color:var(--color-text-secondary)">bud ${(d.gmBud*100).toFixed(1)}%</span>`;
+  document.getElementById('k-ebitda').textContent='$'+ebitda.toLocaleString();
+  document.getElementById('k-ebitda-sub').innerHTML=`<span class="pill ${ebitdaVar>=0?'p-up':'p-dn'}">${ebitdaVar>=0?'▲':'▼'} ${Math.abs(ebitdaVar).toFixed(1)}%</span><span style="color:var(--color-text-secondary)">bud $${d.ebitdaBud.toLocaleString()}</span>`;
+  if(d.cash!=null){
+    const cashVar=d.cash-d.cashPrev;
+    document.getElementById('k-cash').textContent='$'+d.cash.toLocaleString();
+    document.getElementById('k-cash-sub').innerHTML=`<span class="pill ${cashVar>=0?'p-up':'p-dn'}">${cashVar>=0?'▲':'▼'} $${Math.abs(cashVar).toLocaleString()}</span><span style="color:var(--color-text-secondary)">vs prior month</span>`;
+  } else {
+    document.getElementById('k-cash').textContent='—';
+    document.getElementById('k-cash-sub').innerHTML=`<span style="color:var(--color-text-tertiary)">n/a for single BU</span>`;
+  }
+}
+
+function render(){
+  const bu=document.getElementById('sel-bu').value;
+  const period=document.getElementById('sel-period').value;
+  renderKPIs(bu,period);
+  renderRevChart(bu,period);
+  renderBUTable(bu,period);
+  renderWaterfall(bu,period);
+  renderCashChart(bu);
+  renderSparks(bu);
+  renderHC(bu);
+  const now=new Date();
+  document.getElementById('refresh-stamp').textContent=`SAP ERP · ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} local · ✓ Validated`;
+}
+
+render();
+</script>
+</body>
+</html>
