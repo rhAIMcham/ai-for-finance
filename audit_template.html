@@ -346,16 +346,16 @@ function makeRow(num) {
     tr.appendChild(numTd);
 
     // Data cells
-    columns.forEach(col => {
-        const td = document.createElement('td');
-        td.setAttribute('data-label', col.label);
-        const ta = document.createElement('textarea');
-        ta.className = 'txta';
-        ta.placeholder = col.placeholder;
-        ta.rows = 1;
-        td.appendChild(ta);
-        tr.appendChild(td);
-    });
+columns.forEach((col, colIndex) => {
+    const td = document.createElement('td');
+    td.setAttribute('data-label', col.label);
+    const ta = document.createElement('textarea');
+    ta.className = 'txta';
+    if (num === 1) ta.placeholder = col.placeholder;
+    ta.rows = 1;
+    td.appendChild(ta);
+    tr.appendChild(td);
+});
 
     // Delete button cell
     const delTd = document.createElement('td');
@@ -400,7 +400,7 @@ function autoResize(scope) {
 }
 
 // Initial rows
-for (let i = 0; i < 5; i++) addRow();
+for (let i = 0; i < 3; i++) addRow();
 autoResize();
 
 document.getElementById('add-row').addEventListener('click', () => {
